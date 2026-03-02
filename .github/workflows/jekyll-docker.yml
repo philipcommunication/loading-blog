@@ -23,7 +23,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # 최신 Ruby 버전 추천
+          ruby-version: '3.1' # Jekyll 4와 안정적인 호환성을 위해 3.1 사용
           bundler-cache: true
       - name: Setup Pages
         uses: actions/configure-pages@v4
