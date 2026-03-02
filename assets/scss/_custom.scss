@@ -953,49 +953,55 @@ body.game-mode {
         margin: 0 auto;
 
         .news-header {
-          display: grid;
-          grid-template-columns: 115px minmax(0, 1fr) 90px;
-          gap: 10px;
+          display: flex !important;
+          align-items: center;
           background: var(--gb-bezel);
           padding: 10px 15px;
           color: #000;
           font-family: var(--font-pixel);
           font-size: 0.9rem;
           font-weight: bold;
-          align-items: center;
 
-          span {
-            display: inline-block;
+          .news-col-type {
+            width: 110px;
+            flex-shrink: 0;
           }
 
           .news-col-title {
+            flex-grow: 1;
             padding: 0 10px;
-            /* 타이틀 컬럼 패딩 추가 */
+            min-width: 0;
           }
 
           .news-col-date {
+            width: 90px;
+            flex-shrink: 0;
             text-align: right;
           }
 
           @media (max-width: 768px) {
-            grid-template-columns: 85px minmax(0, 1fr) 85px;
             padding: 10px 10px;
             font-size: 0.7rem;
 
-            .news-col-title {
-              padding: 0 8px;
-              /* 모바일 패딩 일치 */
+            .news-col-type {
+              width: 80px;
+            }
+
+            .news-col-date {
+              width: 80px;
             }
           }
 
           @media (max-width: 480px) {
-            grid-template-columns: 75px minmax(0, 1fr) 70px;
             padding: 8px 6px;
             font-size: 0.65rem;
 
-            .news-col-title {
-              padding: 0 5px;
-              /* 모바일 패딩 일치 */
+            .news-col-type {
+              width: 70px;
+            }
+
+            .news-col-date {
+              width: 70px;
             }
           }
         }
@@ -1018,36 +1024,37 @@ body.game-mode {
             }
 
             a {
-              display: grid !important;
-              grid-template-columns: 115px minmax(0, 1fr) 90px;
-              gap: 10px;
+              display: flex !important;
               padding: 12px 15px;
               text-decoration: none !important;
               align-items: center;
               color: #fff;
 
               .news-type {
+                width: 110px;
+                flex-shrink: 0;
                 color: var(--gb-red);
                 font-family: var(--font-pixel);
                 font-size: 0.8rem;
-                flex-shrink: 0;
-                display: inline-block;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
               }
 
               .news-title {
+                flex-grow: 1;
+                min-width: 0;
                 font-family: 'Galmuri11', 'DungGeunMo';
                 font-size: 0.95rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 padding: 0 10px;
-                /* 헤더와 패딩 일치 */
               }
 
               .news-date {
+                width: 90px;
+                flex-shrink: 0;
                 color: #888;
                 font-family: var(--font-pixel);
                 font-size: 0.8rem;
@@ -1055,40 +1062,40 @@ body.game-mode {
               }
 
               @media (max-width: 768px) {
-                grid-template-columns: 85px minmax(0, 1fr) 85px;
                 padding: 12px 10px;
 
                 .news-type {
+                  width: 80px;
                   font-size: 0.7rem;
                 }
 
                 .news-title {
                   font-size: 0.85rem;
                   padding: 0 8px;
-                  /* 헤더와 패딩 일치 */
                 }
 
                 .news-date {
+                  width: 80px;
                   font-size: 0.7rem;
                 }
               }
 
               @media (max-width: 480px) {
-                grid-template-columns: 75px minmax(0, 1fr) 70px;
                 padding: 10px 6px;
 
                 .news-type {
+                  width: 70px;
                   font-size: 0.65rem;
                 }
 
                 .news-date {
+                  width: 70px;
                   font-size: 0.65rem;
                 }
 
                 .news-title {
                   font-size: 0.8rem;
                   padding: 0 5px;
-                  /* 헤더와 패딩 일치 */
                 }
               }
             }
