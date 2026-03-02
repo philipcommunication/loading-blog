@@ -25,22 +25,19 @@
   normalize_whitespace | truncate: 160 | escape %}
   <meta name="description" content="{{ seo_description }}">
 
-  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
-    type='text/css'>
-  <link
-    href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
-    rel='stylesheet' type='text/css'>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 
-  <link rel="stylesheet" href="{{ " /assets/vendor/bootstrap/css/bootstrap.min.css" | relative_url }}">
-  <link rel="stylesheet" href="{{ " /assets/vendor/fontawesome-free/css/all.min.css" | relative_url }}">
-  <link rel="stylesheet" href="{{ " /assets/main.css" | relative_url }}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ " /feed.xml" |
-    relative_url }}">
+  <link rel="stylesheet" href="{{" /assets/vendor/bootstrap/css/bootstrap.min.css" | relative_url}}">
+  <link rel="stylesheet" href="{{" /assets/vendor/fontawesome-free/css/all.min.css" | relative_url}}">
+  <link rel="stylesheet" href="{{" /assets/main.css" | relative_url}}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{" /feed.xml" |
+    relative_url}}">
 
-  <!-- SEO Tag -->
   <meta name="twitter:card" content="summary_large_image" />
   {% if page.title %}
   <meta property="og:title" content="{{ page.title }}" />
@@ -80,9 +77,7 @@
   <meta property="article:tag" content="{{ tag }}" />
   {% endfor %}
   {% endif %}
-  <!-- End SEO Tag -->
 
-  <!-- Favicon Tag -->
   <link rel="apple-touch-icon" sizes="57x57" href="{{ site.url }}/img/icon/apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="{{ site.url }}/img/icon/apple-icon-60x60.png">
   <link rel="apple-touch-icon" sizes="72x72" href="{{ site.url }}/img/icon/apple-icon-72x72.png">
@@ -100,9 +95,7 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="{{ site.url }}/img/icon/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
-  <!-- End Favicon Tag -->
 
-  <!-- 네이버 연관 채널-->
   <script type="application/ld+json">
 {
  "@context": "http://schema.org",
@@ -115,10 +108,8 @@
  ]
 }
 </script>
-  <!--네이버 연관채널 끝-->
 
-  <!--구조화된 데이터-->
-  {%if page.feature %}
+  {% if page.feature %}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",

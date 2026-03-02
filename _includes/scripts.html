@@ -4,15 +4,15 @@
 {% assign asset_scripts = "/assets/scripts.js" %}
 {% assign asset_validation = "/assets/vendor/startbootstrap-clean-blog/js/jqBootstrapValidation.js" %}
 
-<script src="{{ asset_jquery | relative_url }}"></script>
-<script src="{{ asset_bootstrap | relative_url }}"></script>
-<script src="{{ asset_cleanbg | relative_url }}"></script>
+<script src="{{asset_jquery | relative_url}}"></script>
+<script src="{{asset_bootstrap | relative_url}}"></script>
+<script src="{{asset_cleanbg | relative_url}}"></script>
 
-<script src="{{ asset_scripts | relative_url }}"></script>
+<script src="{{asset_scripts | relative_url}}"></script>
 
 {% if page.url contains 'contact' %}
 <!-- Form Validation -->
-<script src="{{ asset_validation | relative_url }}"></script>
+<script src="{{asset_validation | relative_url}}"></script>
 <!-- Send Form -->
 <script>
   $(function () {
