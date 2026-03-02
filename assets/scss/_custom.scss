@@ -953,9 +953,11 @@ body.game-mode {
         margin: 0 auto;
 
         .news-header {
-          display: flex;
+          display: grid;
+          grid-template-columns: 115px 1fr 90px;
+          gap: 10px;
           background: var(--gb-bezel);
-          padding: 10px 20px;
+          padding: 10px 15px;
           color: #000;
           font-family: var(--font-pixel);
           font-size: 0.9rem;
@@ -965,47 +967,24 @@ body.game-mode {
             display: inline-block;
           }
 
-          .news-col-type {
-            width: 115px;
-            /* TYPE 너비 확장 (겹침 방지) */
-            flex-shrink: 0;
-          }
-
           .news-col-title {
-            flex: 1;
-            padding: 0 10px;
+            padding: 0;
           }
 
           .news-col-date {
-            width: 90px;
             text-align: right;
-            flex-shrink: 0;
           }
 
           @media (max-width: 768px) {
-            padding: 10px 12px;
+            grid-template-columns: 85px 1fr 85px;
+            padding: 10px 10px;
             font-size: 0.7rem;
-
-            .news-col-type {
-              width: 85px;
-            }
-
-            .news-col-date {
-              width: 85px;
-            }
           }
 
           @media (max-width: 480px) {
-            padding: 8px 8px;
+            grid-template-columns: 75px 1fr 70px;
+            padding: 8px 6px;
             font-size: 0.65rem;
-
-            .news-col-type {
-              width: 75px;
-            }
-
-            .news-col-date {
-              width: 75px;
-            }
           }
         }
 
@@ -1060,10 +1039,10 @@ body.game-mode {
               }
 
               @media (max-width: 768px) {
+                grid-template-columns: 85px 1fr 85px;
                 padding: 12px 10px;
 
                 .news-type {
-                  width: 85px;
                   font-size: 0.7rem;
                 }
 
@@ -1073,21 +1052,19 @@ body.game-mode {
                 }
 
                 .news-date {
-                  width: 85px;
                   font-size: 0.7rem;
                 }
               }
 
               @media (max-width: 480px) {
+                grid-template-columns: 75px 1fr 70px;
                 padding: 10px 6px;
 
                 .news-type {
-                  width: 75px;
                   font-size: 0.65rem;
                 }
 
                 .news-date {
-                  width: 70px;
                   font-size: 0.65rem;
                 }
 
