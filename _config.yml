@@ -1,0 +1,25 @@
+title:              "Loading Blog"
+tagline:            "마케팅을 게임처럼 쉽게 🕹️"
+email:              "ndk0929@gmail.com"
+description:        "마케팅 정보를 게임처럼 쉽게 알려주는 블로그 (공식광고/바이럴광고/데이터분석/마케팅정보공유)"
+author:             "Loading"
+baseurl: ""
+url:                "https://loading.kr"
+locale:             "ko_KR"
+thumbnail:          "/img/smain.png"
+
+# Social Profiles
+instagram_username: nohdk777
+facebook_username:  100010201817907
+linkedin_username:  동규-노-478872155
+
+# Build settings
+markdown:           kramdown
+permalink:          /:title
+paginate:           5
+paginate_path:      "/posts/page:num/"
+plugins:
+  - jekyll-paginate
+# 블로그 disqus shortname
+disqus:
+  shortname: loading-kr
