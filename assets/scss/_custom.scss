@@ -1027,16 +1027,15 @@ body.game-mode {
             }
 
             a {
-              display: flex !important;
+              display: grid !important;
+              grid-template-columns: 115px 1fr 90px;
+              gap: 10px;
               padding: 12px 15px;
               text-decoration: none !important;
               align-items: center;
-              justify-content: space-between;
               color: #fff;
 
               .news-type {
-                width: 110px;
-                /* 더 넓게 확보하여 겹침 차단 */
                 color: var(--gb-red);
                 font-family: var(--font-pixel);
                 font-size: 0.8rem;
@@ -1045,22 +1044,19 @@ body.game-mode {
               }
 
               .news-title {
-                flex: 1;
                 font-family: 'Galmuri11', 'DungGeunMo';
                 font-size: 0.95rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                padding: 0 10px;
+                padding: 0;
               }
 
               .news-date {
-                width: 90px;
                 color: #888;
                 font-family: var(--font-pixel);
                 font-size: 0.8rem;
                 text-align: right;
-                flex-shrink: 0;
               }
 
               @media (max-width: 768px) {
