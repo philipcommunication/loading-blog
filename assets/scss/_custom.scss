@@ -849,7 +849,7 @@ body.game-mode {
 
   /* 4. 메인 콘텐츠 에어리어 */
   .gb-main-content {
-    background: url('/img/bg-post.png') no-repeat center center !important;
+    background: url('/img/bg-posts.png') no-repeat center center !important;
     background-size: cover !important;
     background-attachment: fixed !important;
     max-width: var(--max-site-width);
@@ -948,8 +948,8 @@ body.game-mode {
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
-        max-width: 850px;
-        /* 전체 너비를 더 줄여서 TITLE-DATE 간격을 좁힘 */
+        max-width: 550px;
+        /* 최종 밀착 너비 */
         margin: 0 auto;
 
         .news-header {
@@ -966,7 +966,7 @@ body.game-mode {
           }
 
           .news-col-type {
-            width: 100px;
+            width: 115px;
             /* TYPE 너비 확장 (겹침 방지) */
             flex-shrink: 0;
           }
@@ -977,8 +977,7 @@ body.game-mode {
           }
 
           .news-col-date {
-            width: 100px;
-            /* DATE 너비 약간 축소 */
+            width: 90px;
             text-align: right;
             flex-shrink: 0;
           }
@@ -1028,25 +1027,27 @@ body.game-mode {
             }
 
             a {
-              display: flex;
-              padding: 15px 20px;
+              display: flex !important;
+              padding: 12px 15px;
               text-decoration: none !important;
               align-items: center;
+              justify-content: space-between;
               color: #fff;
 
               .news-type {
-                width: 100px;
-                /* PC에서 겹침 방지 보장 */
+                width: 110px;
+                /* 더 넓게 확보하여 겹침 차단 */
                 color: var(--gb-red);
                 font-family: var(--font-pixel);
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 flex-shrink: 0;
+                display: inline-block;
               }
 
               .news-title {
                 flex: 1;
                 font-family: 'Galmuri11', 'DungGeunMo';
-                font-size: 1rem;
+                font-size: 0.95rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1054,10 +1055,10 @@ body.game-mode {
               }
 
               .news-date {
-                width: 100px;
+                width: 90px;
                 color: #888;
                 font-family: var(--font-pixel);
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 text-align: right;
                 flex-shrink: 0;
               }
