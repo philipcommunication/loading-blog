@@ -953,7 +953,8 @@ body.game-mode {
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
-        max-width: 1000px;
+        max-width: 850px;
+        /* 전체 너비를 더 줄여서 TITLE-DATE 간격을 좁힘 */
         margin: 0 auto;
 
         .news-header {
@@ -970,44 +971,46 @@ body.game-mode {
           }
 
           .news-col-type {
-            width: 85px;
+            width: 100px;
+            /* TYPE 너비 확장 (겹침 방지) */
             flex-shrink: 0;
           }
 
           .news-col-title {
             flex: 1;
-            padding: 0 15px;
+            padding: 0 10px;
           }
 
           .news-col-date {
-            width: 110px;
+            width: 100px;
+            /* DATE 너비 약간 축소 */
             text-align: right;
             flex-shrink: 0;
           }
 
           @media (max-width: 768px) {
-            padding: 10px 15px;
-            font-size: 0.75rem;
+            padding: 10px 12px;
+            font-size: 0.7rem;
 
             .news-col-type {
-              width: 70px;
+              width: 85px;
             }
 
             .news-col-date {
-              width: 90px;
+              width: 85px;
             }
           }
 
           @media (max-width: 480px) {
-            padding: 8px 10px;
-            font-size: 0.7rem;
+            padding: 8px 8px;
+            font-size: 0.65rem;
 
             .news-col-type {
-              width: 55px;
+              width: 75px;
             }
 
             .news-col-date {
-              width: 80px;
+              width: 75px;
             }
           }
         }
@@ -1037,57 +1040,63 @@ body.game-mode {
               color: #fff;
 
               .news-type {
-                width: 85px;
+                width: 100px;
+                /* PC에서 겹침 방지 보장 */
                 color: var(--gb-red);
                 font-family: var(--font-pixel);
-                font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+                font-size: 0.85rem;
                 flex-shrink: 0;
               }
 
               .news-title {
                 flex: 1;
                 font-family: 'Galmuri11', 'DungGeunMo';
-                font-size: clamp(0.75rem, 2.8vw, 1.05rem);
+                font-size: 1rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                padding: 0 15px;
+                padding: 0 10px;
               }
 
               .news-date {
-                width: 110px;
+                width: 100px;
                 color: #888;
                 font-family: var(--font-pixel);
-                font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+                font-size: 0.85rem;
                 text-align: right;
                 flex-shrink: 0;
               }
 
               @media (max-width: 768px) {
-                padding: 10px 12px;
+                padding: 12px 10px;
 
                 .news-type {
-                  width: 70px;
+                  width: 85px;
+                  font-size: 0.7rem;
                 }
 
                 .news-title {
-                  padding: 0 10px;
+                  font-size: 0.85rem;
+                  padding: 0 8px;
                 }
 
                 .news-date {
-                  width: 90px;
+                  width: 85px;
+                  font-size: 0.7rem;
                 }
               }
 
               @media (max-width: 480px) {
-                padding: 8px 6px;
+                padding: 10px 6px;
 
                 .news-type {
-                  width: 55px;
+                  width: 75px;
+                  font-size: 0.65rem;
                 }
 
                 .news-date {
-                  width: 80px;
+                  width: 70px;
+                  font-size: 0.65rem;
                 }
 
                 .news-title {
