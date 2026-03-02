@@ -954,7 +954,7 @@ body.game-mode {
 
         .news-header {
           display: grid;
-          grid-template-columns: 115px 1fr 90px;
+          grid-template-columns: 115px minmax(0, 1fr) 90px;
           gap: 10px;
           background: var(--gb-bezel);
           padding: 10px 15px;
@@ -962,13 +962,15 @@ body.game-mode {
           font-family: var(--font-pixel);
           font-size: 0.9rem;
           font-weight: bold;
+          align-items: center;
 
           span {
             display: inline-block;
           }
 
           .news-col-title {
-            padding: 0;
+            padding: 0 10px;
+            /* 타이틀 컬럼 패딩 추가 */
           }
 
           .news-col-date {
@@ -976,15 +978,25 @@ body.game-mode {
           }
 
           @media (max-width: 768px) {
-            grid-template-columns: 85px 1fr 85px;
+            grid-template-columns: 85px minmax(0, 1fr) 85px;
             padding: 10px 10px;
             font-size: 0.7rem;
+
+            .news-col-title {
+              padding: 0 8px;
+              /* 모바일 패딩 일치 */
+            }
           }
 
           @media (max-width: 480px) {
-            grid-template-columns: 75px 1fr 70px;
+            grid-template-columns: 75px minmax(0, 1fr) 70px;
             padding: 8px 6px;
             font-size: 0.65rem;
+
+            .news-col-title {
+              padding: 0 5px;
+              /* 모바일 패딩 일치 */
+            }
           }
         }
 
@@ -1007,7 +1019,7 @@ body.game-mode {
 
             a {
               display: grid !important;
-              grid-template-columns: 115px 1fr 90px;
+              grid-template-columns: 115px minmax(0, 1fr) 90px;
               gap: 10px;
               padding: 12px 15px;
               text-decoration: none !important;
@@ -1020,6 +1032,9 @@ body.game-mode {
                 font-size: 0.8rem;
                 flex-shrink: 0;
                 display: inline-block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
 
               .news-title {
@@ -1028,7 +1043,8 @@ body.game-mode {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                padding: 0;
+                padding: 0 10px;
+                /* 헤더와 패딩 일치 */
               }
 
               .news-date {
@@ -1039,7 +1055,7 @@ body.game-mode {
               }
 
               @media (max-width: 768px) {
-                grid-template-columns: 85px 1fr 85px;
+                grid-template-columns: 85px minmax(0, 1fr) 85px;
                 padding: 12px 10px;
 
                 .news-type {
@@ -1049,6 +1065,7 @@ body.game-mode {
                 .news-title {
                   font-size: 0.85rem;
                   padding: 0 8px;
+                  /* 헤더와 패딩 일치 */
                 }
 
                 .news-date {
@@ -1057,7 +1074,7 @@ body.game-mode {
               }
 
               @media (max-width: 480px) {
-                grid-template-columns: 75px 1fr 70px;
+                grid-template-columns: 75px minmax(0, 1fr) 70px;
                 padding: 10px 6px;
 
                 .news-type {
@@ -1071,6 +1088,7 @@ body.game-mode {
                 .news-title {
                   font-size: 0.8rem;
                   padding: 0 5px;
+                  /* 헤더와 패딩 일치 */
                 }
               }
             }
