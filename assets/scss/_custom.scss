@@ -826,29 +826,19 @@ body.game-mode {
   }
 
   .ls-grip {
-    left: calc(50% - (var(--max-site-width) / 2) - 140px);
+    left: 0;
     border-right: none;
 
-    @media (max-width: 1680px) {
-      left: 0;
-    }
-
     @media (max-width: 1400px) {
-      left: 0;
       width: 120px;
     }
   }
 
   .rs-grip {
-    right: calc(50% - (var(--max-site-width) / 2) - 140px);
+    right: 0;
     border-left: none;
 
-    @media (max-width: 1680px) {
-      right: 0;
-    }
-
     @media (max-width: 1400px) {
-      right: 0;
       width: 120px;
     }
 
