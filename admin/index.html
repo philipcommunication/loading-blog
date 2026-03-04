@@ -751,26 +751,35 @@
             const url = `https://api.github.com/repos/${GH_CONFIG.repo}/contents/${path}`;
             const options = {
                 method,
+                mode: 'cors', // Explicitly set CORS mode
                 headers: {
-                    'Authorization': `token ${GH_CONFIG.token}`,
+                    'Authorization': `Bearer ${GH_CONFIG.token}`, // Modern Bearer token format
                     'Accept': 'application/vnd.github.v3+json',
                     'Cache-Control': 'no-cache'
                 }
             };
             if (body) options.body = JSON.stringify(body);
+
             try {
+                console.log(`[GitHub API] ${method} Request to: ${url}`);
                 const res = await fetch(url, options);
+
                 if (!res.ok) {
                     const err = await res.json();
                     if (res.status === 404 && method === 'GET') return null;
-                    if (res.status === 401) showToast("Invalid Token! Refresh PAT.", "error");
+                    if (res.status === 401) showToast("Invalid Token! Please check your PAT.", "error");
                     else showToast(`GitHub Error (${res.status}): ${err.message}`, "error");
                     return null;
                 }
                 return await res.json();
             } catch (e) {
-                console.error("Fetch Error:", e);
-                showToast(`Connection Failed: Check Storage Path or Network.`, "error");
+                console.group("❌ GitHub API Fetch Error");
+                console.error("Error Name:", e.name);
+                console.error("Error Message:", e.message);
+                console.error("Target URL:", url);
+                console.groupEnd();
+
+                showToast(`Connection Failed: ${e.message}. Press F12 for details.`, "error");
                 return null;
             }
         }
