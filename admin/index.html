@@ -660,6 +660,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script>
         // --- DATA STATE ---
         let originalPosts = []; // Populated via GitHub API
@@ -723,8 +724,14 @@
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             document.getElementById('panel-' + p).classList.add('active');
             if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
-            document.getElementById('current-view-title').innerText = p.toUpperCase().replace('PANEL-', '');
+
+            const titleEl = document.getElementById('current-view-title');
+            if (titleEl) titleEl.innerText = p.toUpperCase().replace('PANEL-', '');
+
             if (p === 'posts') renderPosts();
+            if (p === 'news') fetchNews();
+            if (p === 'assets') fetchAssets();
+            if (p === 'pages') fetchPages();
         }
 
         function showToast(msg, type) {
@@ -813,7 +820,7 @@
             const tbody = document.getElementById('posts-tbody');
             if (!tbody) return;
             if (posts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? 'No posts found in _posts/' : 'Please set GitHub Token in Config tab first.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? 'Checking posts in _posts/...' : 'Please set GitHub Token in Config tab first.'}</td></tr>`;
                 return;
             }
             tbody.innerHTML = posts.map(p => `
@@ -823,6 +830,121 @@
                     <td>${p.date}</td>
                     <td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="openForEdit('${p.path}')">MODIFY</button></td>
                 </tr>
+            `).join('');
+        }
+
+        // --- NEWS MANAGEMENT ---
+        async function fetchNews() {
+            const tbody = document.getElementById('news-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">Fetching news board...</td></tr>`;
+
+            const file = await apiCall('_data/news.yml');
+            if (!file) return;
+
+            try {
+                const content = decodeURIComponent(escape(atob(file.content)));
+                newsData = jsyaml.load(content) || [];
+                renderNews();
+            } catch (e) {
+                showToast("Failed to parse News YAML", "error");
+            }
+        }
+
+        function renderNews() {
+            const tbody = document.getElementById('news-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = newsData.map((n, idx) => `
+                <tr>
+                    <td><input type="text" value="${n.type}" onchange="updateNewsItem(${idx}, 'type', this.value)" style="padding:5px; height:30px; font-size:0.8rem; border:none; background:#f9f9f9;"></td>
+                    <td><input type="text" value="${n.title}" onchange="updateNewsItem(${idx}, 'title', this.value)" style="padding:5px; height:30px; font-size:0.8rem; border:none; background:#f9f9f9; width:100%;"></td>
+                    <td><input type="text" value="${n.date}" onchange="updateNewsItem(${idx}, 'date', this.value)" style="padding:5px; height:30px; font-size:0.8rem; border:none; background:#f9f9f9;"></td>
+                </tr>
+            `).join('');
+
+            const actions = document.querySelector('#panel-news .card-header');
+            if (actions && !document.getElementById('btn-save-news')) {
+                const btn = document.createElement('button');
+                btn.id = 'btn-save-news';
+                btn.className = 'btn btn-primary';
+                btn.innerHTML = '<i class="fas fa-save"></i> SAVE CHANGES';
+                btn.onclick = saveNewsToGithub;
+                actions.appendChild(btn);
+            }
+        }
+
+        function updateNewsItem(idx, key, val) {
+            newsData[idx][key] = val;
+        }
+
+        async function saveNewsToGithub() {
+            toggleLoading(true, "SAVING NEWS...");
+            const yaml = jsyaml.dump(newsData);
+            const file = await apiCall('_data/news.yml');
+            const sha = file ? file.sha : null;
+
+            const res = await apiCall('_data/news.yml', 'PUT', {
+                message: "Update news board via Admin",
+                content: btoa(unescape(encodeURIComponent(yaml))),
+                sha: sha,
+                branch: GH_CONFIG.branch
+            });
+
+            toggleLoading(false);
+            if (res) showToast("News updated successfully!", "success");
+        }
+
+        // --- PAGE MANAGEMENT ---
+        async function fetchPages() {
+            const tbody = document.getElementById('pages-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">Fetching pages...</td></tr>`;
+
+            const data = await apiCall('');
+            if (!data) return;
+
+            pageData = data.filter(f => f.name.endsWith('.md') || (f.name.endsWith('.html') && !['index.html', 'admin'].includes(f.name)))
+                .map(f => ({ path: f.path, title: f.name }));
+            renderPages();
+        }
+
+        function renderPages() {
+            const tbody = document.getElementById('pages-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = pageData.map(p => `
+                <tr>
+                    <td>${p.path}</td>
+                    <td style="font-weight:600;">${p.title}</td>
+                    <td style="text-align:right;"><button class="btn" style="padding:4px 12px; font-size:0.75rem; border-color:var(--primary); color:var(--primary);" onclick="openForEdit('${p.path}')">MODIFY</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // --- ASSET MANAGEMENT ---
+        async function fetchAssets() {
+            const grid = document.getElementById('assets-grid');
+            if (!grid) return;
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px;">Fetching assets from GitHub...</div>`;
+
+            const data = await apiCall('img/posts');
+            if (!data) return;
+
+            assetData = data.filter(f => f.type === 'file').map(f => ({ path: '/' + f.path, name: f.name }));
+            renderAssets();
+        }
+
+        function renderAssets() {
+            const grid = document.getElementById('assets-grid');
+            if (!grid) return;
+            grid.innerHTML = assetData.map(a => `
+                <div style="text-align:center; border:1px solid #eee; padding:15px; border-radius:8px; background:white; transition:0.2s;" 
+                     onmouseover="this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                    <div style="height:120px; display:flex; align-items:center; justify-content:center; background:#f9f9f9; border-radius:4px; margin-bottom:12px; overflow:hidden;">
+                        <img src="${a.path}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                    </div>
+                    <div style="font-size:0.75rem; color:#777; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:8px;">${a.name}</div>
+                    <button class="btn" style="font-size:0.7rem; padding:5px; width:100%; border-color:#e0e0e0;" onclick="copyToClipboard('${a.path}')">COPY PATH</button>
+                </div>
             `).join('');
         }
 
@@ -856,17 +978,21 @@
             // Switch to editor
             document.getElementById('posts-list-view').style.display = 'none';
             document.getElementById('posts-editor-view').style.display = 'block';
-            document.getElementById('editor-title').innerText = 'MISSION: MODIFY POST';
+
+            const isPage = !path.includes('_posts/');
+            document.getElementById('editor-title').innerText = isPage ? 'MISSION: MODIFY PAGE' : 'MISSION: MODIFY POST';
 
             // Fill form
             document.getElementById('p-title').value = metadata.title || '';
-            document.getElementById('p-slug').value = path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
-            document.getElementById('p-date').value = path.match(/^\d{4}-\d{2}-\d{2}/) ? path.match(/^\d{4}-\d{2}-\d{2}/)[0] : '';
+            document.getElementById('p-slug').value = path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '').replace(/\.html$/, '');
+            document.getElementById('p-date').value = path.match(/^\d{4}-\d{2}-\d{2}/) ? path.match(/^\d{4}-\d{2}-\d{2}/)[0] : new Date().toISOString().split('T')[0];
             document.getElementById('p-cat').value = metadata.categories ? metadata.categories.replace(/[\[\]]/g, '') : 'NEWS';
             document.getElementById('p-tags').value = metadata.tags || '';
             document.getElementById('p-img').value = metadata.feature || '';
             document.getElementById('p-desc').value = metadata.excerpt || '';
             document.getElementById('md-input').value = body;
+
+            window.currentEditPath = path; // Store for saving
 
             updatePreview();
         }
@@ -912,8 +1038,14 @@
             const date = document.getElementById('p-date').value;
             if (!title || !slug) { alert("Title and Slug are required!"); return; }
 
-            const fileName = `${date}-${slug}.md`;
-            const path = `_posts/${fileName}`;
+            let path = window.currentEditPath;
+            const isEditing = !!path;
+
+            if (!isEditing) {
+                // New Post
+                const fileName = `${date}-${slug}.md`;
+                path = `_posts/${fileName}`;
+            }
 
             toggleLoading(true, "SAVING TO GITHUB...");
 
@@ -928,7 +1060,7 @@
             const contentEncoded = btoa(unescape(encodeURIComponent(yaml)));
 
             const res = await apiCall(path, 'PUT', {
-                message: `${sha ? 'Update' : 'Create'} post: ${title}`,
+                message: `${sha ? 'Update' : 'Create'} content via Admin: ${title}`,
                 content: contentEncoded,
                 sha: sha,
                 branch: GH_CONFIG.branch
@@ -938,7 +1070,8 @@
             if (res) {
                 showToast("Mission Successful! Code synced to GitHub.", "success");
                 hideEditor();
-                fetchLatestPosts(); // Refresh list
+                window.currentEditPath = null;
+                if (path.includes('_posts/')) fetchLatestPosts(); else fetchPages();
             }
         }
 
