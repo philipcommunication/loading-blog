@@ -200,11 +200,13 @@
         .form-row {
             display: flex;
             gap: 25px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group {
             flex: 1;
+            padding: 0 5px;
+            /* Add slight inner padding to avoid edge sticking */
         }
 
         label {
@@ -434,6 +436,80 @@
             border-color: var(--primary);
             background: #fff5f5;
         }
+
+        /* Filter Styles */
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .cat-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .cat-information {
+            color: #007bff;
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .cat-experience {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .cat-marketing {
+            color: #fd7e14;
+            background: rgba(253, 126, 20, 0.1);
+        }
+
+        .cat-manual {
+            color: #6f42c1;
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        .cat-record {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .cat-about {
+            color: #000;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .cat-post {
+            color: #6c757d;
+            background: rgba(108, 117, 125, 0.1);
+        }
     </style>
 </head>
 
@@ -470,11 +546,20 @@
                                 <h3>작성된 포스팅</h3><button class="btn btn-primary" onclick="showEditor()"><i
                                         class="fas fa-plus"></i> 새 글 쓰기</button>
                             </div>
-                            <div style="padding:20px; border-bottom:1px solid #eee; background:#fafafa;">
+                            <div style="padding:25px; border-bottom:1px solid #eee; background:#fafafa;">
+                                <div class="filter-group" id="post-category-filters">
+                                    <button class="filter-btn active" onclick="setCategoryFilter('all')">전체글</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('about')">소개(About)</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('manual')">메뉴얼</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('marketing')">마케팅</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('experience')">경험</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('information')">정보</button>
+                                    <button class="filter-btn" onclick="setCategoryFilter('record')">기록</button>
+                                </div>
                                 <div style="position:relative;"><i class="fas fa-search"
                                         style="position:absolute; left:15px; top:13px; color:#aaa;"></i><input
-                                        type="text" placeholder="제목 또는 내용 검색..." style="padding-left:45px; height:45px;"
-                                        oninput="filterPosts(this.value)"></div>
+                                        type="text" id="post-search-input" placeholder="제목 또는 내용 검색..."
+                                        style="padding-left:45px; height:45px;" oninput="applyFilters()"></div>
                             </div>
                             <div class="card-body" style="padding:0;">
                                 <table class="data-table">
@@ -502,19 +587,19 @@
                                         onclick="exportPost()">코드 보기</button></div>
                             </div>
                             <div class="card-body">
-                                <div class="form-row">
+                                <div class="form-row" style="padding: 10px 0;">
                                     <div class="form-group" style="flex:2.5;"><label>포스트 제목</label><input type="text"
-                                            id="p-title" oninput="autoSlug()"></div>
-                                    <div class="form-group" style="flex:1;"><label>카테고리</label><select id="p-cat">{%
-                                            for cat in site.categories %}<option value="{{ cat[0] }}">{{ cat[0]|upcase
-                                                }}</option>{% endfor %}</select></div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group" style="flex:2.5;"><label>포스트 제목</label><input type="text"
-                                            id="p-title" oninput="autoSlug()"></div>
-                                    <div class="form-group" style="flex:1;"><label>카테고리</label><select id="p-cat">{%
-                                            for cat in site.categories %}<option value="{{ cat[0] }}">{{ cat[0]|upcase
-                                                }}</option>{% endfor %}</select></div>
+                                            id="p-title" oninput="autoSlug()" placeholder="멋진 제목을 입력하세요"></div>
+                                    <div class="form-group" style="flex:1.5;"><label>카테고리</label>
+                                        <select id="p-cat">
+                                            <option value="information">INFORMATION (정보)</option>
+                                            <option value="experience">EXPERIENCE (경험)</option>
+                                            <option value="marketing">MARKETING (마케팅)</option>
+                                            <option value="manual">MANUAL (메뉴얼)</option>
+                                            <option value="record">RECORD (기록)</option>
+                                            <option value="about">ABOUT (소개)</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group" style="flex:1.5;"><label>URL 주소 (슬러그)</label><input
@@ -666,6 +751,8 @@
         // --- DATA STATE ---
         let originalPosts = []; // Populated via GitHub API
         let posts = [];
+        let currentCategory = 'all';
+        let currentSearch = '';
         let newsData = []; // Can be expanded to fetch from _data/news.yml via API
         let pageData = [];
         let assetData = [];
@@ -809,35 +896,65 @@
                 .filter(f => f.name.endsWith('.md'))
                 .map(f => {
                     const nameParts = f.name.match(/^(\d{4}-\d{2}-\d{2})-(.*)\.md$/);
+                    const filename = f.name.toLowerCase();
+
+                    // Guess category from filename
+                    let gCat = 'post';
+                    if (filename.includes('info')) gCat = 'information';
+                    else if (filename.includes('exp')) gCat = 'experience';
+                    else if (filename.includes('manual')) gCat = 'manual';
+                    else if (filename.includes('mark')) gCat = 'marketing';
+                    else if (filename.includes('record')) gCat = 'record';
+                    else if (filename.includes('about')) gCat = 'about';
+
                     return {
                         title: nameParts ? nameParts[2].replace(/-/g, ' ') : f.name,
                         date: nameParts ? nameParts[1] : 'Unknown',
                         path: f.path,
                         slug: nameParts ? nameParts[2] : f.name,
-                        cat: 'POST'
+                        cat: gCat
                     };
                 })
                 .reverse(); // Newest first
 
             posts = [...originalPosts];
-            renderPosts();
+            applyFilters();
         }
 
         function renderPosts() {
             const tbody = document.getElementById('posts-tbody');
             if (!tbody) return;
             if (posts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? '_posts/ 폴더에서 글을 찾는 중...' : '설정 탭에서 GitHub 토큰을 먼저 입력해주세요.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? '조건에 맞는 글이 없습니다.' : '설정 탭에서 GitHub 토큰을 먼저 입력해주세요.'}</td></tr>`;
                 return;
             }
             tbody.innerHTML = posts.map(p => `
                 <tr>
                     <td style="font-weight:600;">${p.title}</td>
-                    <td><span style="font-size:0.75rem; color:#f03e2f; background:rgba(240,62,47,0.1); padding:4px 10px; border-radius:15px; font-weight:700;">${p.cat}</span></td>
+                    <td><span class="cat-badge cat-${p.cat}">${p.cat}</span></td>
                     <td>${p.date}</td>
                     <td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="openForEdit('${p.path}')">수정하기</button></td>
                 </tr>
             `).join('');
+        }
+
+        function setCategoryFilter(cat) {
+            currentCategory = cat;
+            // Update UI
+            document.querySelectorAll('#post-category-filters .filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${cat}'`));
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = document.getElementById('post-search-input').value.toLowerCase();
+            posts = originalPosts.filter(p => {
+                const matchSearch = p.title.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q);
+                const matchCat = (currentCategory === 'all' || p.cat === currentCategory);
+                return matchSearch && matchCat;
+            });
+            renderPosts();
         }
 
         // --- NEWS MANAGEMENT ---
@@ -993,7 +1110,14 @@
             document.getElementById('p-title').value = metadata.title || '';
             document.getElementById('p-slug').value = path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '').replace(/\.html$/, '');
             document.getElementById('p-date').value = path.match(/^\d{4}-\d{2}-\d{2}/) ? path.match(/^\d{4}-\d{2}-\d{2}/)[0] : new Date().toISOString().split('T')[0];
-            document.getElementById('p-cat').value = metadata.categories ? metadata.categories.replace(/[\[\]]/g, '') : 'NEWS';
+            let catVal = metadata.categories ? metadata.categories.replace(/[\[\]]/g, '').trim().toLowerCase() : 'information';
+            // Ensure the value exists in our select options, else default
+            const catSelect = document.getElementById('p-cat');
+            if ([...catSelect.options].some(opt => opt.value === catVal)) {
+                catSelect.value = catVal;
+            } else {
+                catSelect.value = 'information';
+            }
             document.getElementById('p-tags').value = metadata.tags || '';
             document.getElementById('p-img').value = metadata.feature || '';
             document.getElementById('p-desc').value = metadata.excerpt || '';
@@ -1112,10 +1236,6 @@
             reader.readAsDataURL(file);
         }
 
-        function filterPosts(q) {
-            posts = originalPosts.filter(p => p.title.toLowerCase().includes(q.toLowerCase()));
-            renderPosts();
-        }
 
         function exportPost() {
             let tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
