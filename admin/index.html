@@ -602,7 +602,7 @@
                                         placeholder="ghp_xxxxxxxxxxxx"></div>
                                 <div class="form-group" style="flex:1;"><label>Repo (Owner/Name)</label><input
                                         type="text" id="gh-repo" placeholder="username/repo"
-                                        value="{{ site.repository.url | split: '/' | last | remove: '.git' | prepend: '/' | prepend: site.repository.url | split: 'github.com/' | last }}">
+                                        value="philipcommunication/loading-blog">
                                 </div>
                             </div>
                             <p style="font-size:0.8rem; color:#888; margin-top:0;">* Your token is stored only in your
@@ -644,6 +644,11 @@
             </div>
         </main>
     </div>
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text" style="font-family:var(--pixel); color:#333; font-weight:700;">PROCESSING...</div>
+    </div>
+    <div class="toast" id="toast"></div>
     <div class="overlay" id="modal-overlay">
         <div class="modal">
             <div class="card-header">
@@ -656,58 +661,30 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        let originalPosts = [{% for post in site.posts %}{ title: { { post.title | jsonify } }, cat: { { post.categories | first | jsonify } }, date: "{{post.date|date:'%Y-%m-%d'}}", slug: { { post.url | remove: '/' | jsonify } }, tags: { { post.tags | jsonify } }, img: { { post.feature | jsonify } }, desc: { { post.excerpt | strip_html | strip_newlines | truncate: 200 | jsonify } }, content: { { post.content | jsonify } } } {% unless forloop.last %}, {% endunless %} {% endfor %}];
-        let posts = [...originalPosts];
-        let newsData = [{% for n in site.data.news %}{ type: { { n.type | jsonify } }, title: { { n.title | jsonify } }, date: { { n.date | jsonify } } } {% unless forloop.last %}, {% endunless %} {% endfor %}];
-        let pageData = [{% for p in site.pages %}{% if p.title %} { path: { { p.url | jsonify } }, title: { { p.title | jsonify } } } {% unless forloop.last %}, {% endunless %} {% endif %} {% endfor %}];
-        let assetData = [{% for f in site.static_files %}{% if f.path contains '/img/' %} { path: { { f.path | jsonify } }, name: { { f.name | jsonify } } } {% unless forloop.last %}, {% endunless %} {% endif %} {% endfor %}];
-        function navTo(p) {
-            document.querySelectorAll('.section-panel').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('panel-' + p).classList.add('active');
-            if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
-            document.getElementById('current-view-title').innerText = p.toUpperCase().replace('PANEL-', '');
-            if (p === 'posts') renderPosts(); if (p === 'news') renderNews(); if (p === 'assets') renderAssets(); if (p === 'pages') renderPages();
-        }
-        function renderPosts() { document.getElementById('posts-tbody').innerHTML = posts.map(p => `<tr><td style="font-weight:600;">${p.title}</td><td><span style="font-size:0.75rem; color:#f03e2f; background:rgba(240,62,47,0.1); padding:4px 10px; border-radius:15px; font-weight:700;">${(p.cat || 'NONE').toUpperCase()}</span></td><td>${p.date}</td><td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="showEditor('${p.slug}')">MODIFY</button></td></tr>`).join(''); }
-        function renderPages() { document.getElementById('pages-tbody').innerHTML = pageData.map(p => `<tr><td>${p.path}</td><td>${p.title}</td></tr>`).join(''); }
-        function renderNews() { document.getElementById('news-tbody').innerHTML = newsData.map(n => `<tr><td><b style="color:var(--primary)">${n.type}</b></td><td>${n.title}</td><td>${n.date}</td></tr>`).join(''); }
-        function renderAssets() { document.getElementById('assets-grid').innerHTML = assetData.map(a => `<div style="text-align:center; border:1px solid #eee; padding:15px; border-radius:8px; background:white; transition:0.2s;" onmouseover="this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'"><div style="height:120px; display:flex; align-items:center; justify-content:center; background:#f9f9f9; border-radius:4px; margin-bottom:12px; overflow:hidden;"><img src="${a.path}" style="max-width:100%; max-height:100%; object-fit:contain;"></div><div style="font-size:0.75rem; color:#777; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:8px;">${a.name}</div><button class="btn" style="font-size:0.7rem; padding:5px; width:100%; border-color:#e0e0e0;" onclick="copyToClipboard('${a.path}')">COPY PATH</button></div>`).join(''); }
-        function showEditor(slug) {
-            document.getElementById('posts-list-view').style.display = 'none'; document.getElementById('posts-editor-view').style.display = 'block';
-            document.getElementById('editor-title').innerText = slug ? 'MISSION: MODIFY POST' : 'MISSION: NEW ENTRANCE';
-            if (slug) {
-                const p = originalPosts.find(x => x.slug === slug); if (p) {
-                    document.getElementById('p-title').value = p.title; document.getElementById('p-cat').value = p.cat; document.getElementById('p-slug').value = p.slug;
-                    document.getElementById('p-date').value = p.date; document.getElementById('md-input').value = p.content || '';
-                    document.getElementById('p-tags').value = (p.tags || []).join(', '); document.getElementById('p-img').value = p.img || ''; document.getElementById('p-desc').value = p.desc || '';
-                }
-            } else {
-                document.querySelectorAll('#posts-editor-view input, #posts-editor-view textarea').forEach(i => i.value = "");
-                document.getElementById('p-date').value = new Date().toISOString().split('T')[0]; document.getElementById('md-input').value = "# NEW POST TITLE\n\nWrite your content here...";
-            }
-            updatePreview();
-        }
-        function hideEditor() { document.getElementById('posts-list-view').style.display = 'block'; document.getElementById('posts-editor-view').style.display = 'none'; }
-        function autoSlug() { document.getElementById('p-slug').value = document.getElementById('p-title').value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); }
-        function updatePreview() { document.getElementById('md-preview').innerHTML = marked.parse(document.getElementById('md-input').value); }
-        function insertFmt(pre, post) { let el = document.getElementById('md-input'); let s = el.selectionStart, e = el.selectionEnd, t = el.value; el.value = t.substring(0, s) + pre + t.substring(s, e) + (post || pre) + t.substring(e); el.focus(); updatePreview(); }
-        function filterPosts(q) { posts = originalPosts.filter(p => p.title.toLowerCase().includes(q.toLowerCase())); renderPosts(); }
-        function exportPost() {
-            let tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
-            let yaml = `---\nlayout: post\ntitle: '${document.getElementById('p-title').value}'\ndate: ${document.getElementById('p-date').value}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${document.getElementById('p-slug').value}/\n---\n\n${document.getElementById('md-input').value}`;
-            openModal(yaml);
-        }
-        function openModal(v) { document.getElementById('modal-result').value = v; document.getElementById('modal-overlay').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        function copyResult() { document.getElementById('modal-result').select(); document.execCommand('copy'); alert('Mission Code Copied!'); }
-        function copyToClipboard(t) { let el = document.createElement("input"); document.body.appendChild(el); el.value = t; el.select(); document.execCommand("copy"); document.body.removeChild(el); showToast("Link Copied!", "success"); }
+        // --- DATA STATE ---
+        let originalPosts = []; // Populated via GitHub API
+        let posts = [];
+        let newsData = []; // Can be expanded to fetch from _data/news.yml via API
+        let pageData = [];
+        let assetData = [];
 
-        // --- GITHUB API REAL-TIME INTEGRATION ---
+        // --- GITHUB API CONFIGURATION ---
         const GH_CONFIG = {
             token: localStorage.getItem('gh_token'),
             repo: localStorage.getItem('gh_repo') || 'philipcommunication/loading-blog',
             branch: 'main'
+        };
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            if (GH_CONFIG.token) {
+                document.getElementById('gh-token').value = GH_CONFIG.token;
+                document.getElementById('gh-repo').value = GH_CONFIG.repo;
+                fetchLatestPosts();
+            } else {
+                showToast("Set GitHub Token in Config to list posts!", "error");
+            }
+            renderPosts();
         };
 
         function saveGHSettings() {
@@ -716,13 +693,25 @@
             GH_CONFIG.token = document.getElementById('gh-token').value;
             GH_CONFIG.repo = document.getElementById('gh-repo').value;
             showToast("GitHub Settings Saved", "success");
+            fetchLatestPosts(); // Refresh list immediately
+        }
+
+        // --- NAVIGATION & UI ---
+        function navTo(p) {
+            document.querySelectorAll('.section-panel').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('panel-' + p).classList.add('active');
+            if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
+            document.getElementById('current-view-title').innerText = p.toUpperCase().replace('PANEL-', '');
+            if (p === 'posts') renderPosts();
         }
 
         function showToast(msg, type) {
             const t = document.getElementById('toast');
+            if (!t) return;
             t.innerText = msg;
             t.className = `toast show ${type}`;
-            setTimeout(() => t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 4000);
         }
 
         function toggleLoading(show, text) {
@@ -730,24 +719,194 @@
             if (text) document.getElementById('loading-text').innerText = text;
         }
 
+        // --- CORE API ENGINE ---
         async function apiCall(path, method = 'GET', body = null) {
-            if (!GH_CONFIG.token) { alert("Please set GitHub Token in Configuration tab!"); return null; }
+            if (!GH_CONFIG.token) {
+                showToast("GitHub Token is missing! Check Configuration.", "error");
+                return null;
+            }
             const url = `https://api.github.com/repos/${GH_CONFIG.repo}/contents/${path}`;
             const options = {
                 method,
                 headers: {
                     'Authorization': `token ${GH_CONFIG.token}`,
                     'Accept': 'application/vnd.github.v3+json',
+                    'Cache-Control': 'no-cache'
                 }
             };
             if (body) options.body = JSON.stringify(body);
-            const res = await fetch(url, options);
-            if (!res.ok) {
-                const err = await res.json();
-                showToast(`Error: ${err.message}`, "error");
+            try {
+                const res = await fetch(url, options);
+                if (!res.ok) {
+                    const err = await res.json();
+                    if (res.status === 404 && method === 'GET') return null; // File not found is OK for check
+                    showToast(`GitHub Error: ${err.message}`, "error");
+                    return null;
+                }
+                return await res.json();
+            } catch (e) {
+                showToast(`Request Failed: ${e.message}`, "error");
                 return null;
             }
-            return await res.json();
+        }
+
+        // --- POST MANAGEMENT ---
+        async function fetchLatestPosts() {
+            toggleLoading(true, "FETCHING RECENT POSTS...");
+            const data = await apiCall('_posts');
+            toggleLoading(false);
+            if (!data || !Array.isArray(data)) return;
+
+            // Map GitHub file list to Post objects
+            originalPosts = data
+                .filter(f => f.name.endsWith('.md'))
+                .map(f => {
+                    const nameParts = f.name.match(/^(\d{4}-\d{2}-\d{2})-(.*)\.md$/);
+                    return {
+                        title: nameParts ? nameParts[2].replace(/-/g, ' ') : f.name,
+                        date: nameParts ? nameParts[1] : 'Unknown',
+                        path: f.path,
+                        slug: nameParts ? nameParts[2] : f.name,
+                        cat: 'POST'
+                    };
+                })
+                .reverse(); // Newest first
+
+            posts = [...originalPosts];
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const tbody = document.getElementById('posts-tbody');
+            if (!tbody) return;
+            if (posts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? 'No posts found in _posts/' : 'Please set GitHub Token in Config tab first.'}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = posts.map(p => `
+                <tr>
+                    <td style="font-weight:600;">${p.title}</td>
+                    <td><span style="font-size:0.75rem; color:#f03e2f; background:rgba(240,62,47,0.1); padding:4px 10px; border-radius:15px; font-weight:700;">${p.cat}</span></td>
+                    <td>${p.date}</td>
+                    <td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="openForEdit('${p.path}')">MODIFY</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function openForEdit(path) {
+            toggleLoading(true, "DOWNLOADING MISSION CONTENT...");
+            const file = await apiCall(path);
+            toggleLoading(false);
+            if (!file) return;
+
+            // Decode content (handle UTF-8 correctly)
+            const rawContent = atob(file.content);
+            const content = decodeURIComponent(escape(rawContent));
+
+            // Basic Front Matter Parsing
+            const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
+            let metadata = {};
+            let body = content;
+
+            if (fmMatch) {
+                fmMatch[1].split('\n').forEach(line => {
+                    const part = line.split(':');
+                    if (part.length >= 2) {
+                        const key = part[0].trim();
+                        const val = part.slice(1).join(':').trim().replace(/^['"]|['"]$/g, '');
+                        metadata[key] = val;
+                    }
+                });
+                body = content.replace(fmMatch[0], '').trim();
+            }
+
+            // Switch to editor
+            document.getElementById('posts-list-view').style.display = 'none';
+            document.getElementById('posts-editor-view').style.display = 'block';
+            document.getElementById('editor-title').innerText = 'MISSION: MODIFY POST';
+
+            // Fill form
+            document.getElementById('p-title').value = metadata.title || '';
+            document.getElementById('p-slug').value = path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
+            document.getElementById('p-date').value = path.match(/^\d{4}-\d{2}-\d{2}/) ? path.match(/^\d{4}-\d{2}-\d{2}/)[0] : '';
+            document.getElementById('p-cat').value = metadata.categories ? metadata.categories.replace(/[\[\]]/g, '') : 'NEWS';
+            document.getElementById('p-tags').value = metadata.tags || '';
+            document.getElementById('p-img').value = metadata.feature || '';
+            document.getElementById('p-desc').value = metadata.excerpt || '';
+            document.getElementById('md-input').value = body;
+
+            updatePreview();
+        }
+
+        function showEditor() {
+            document.getElementById('posts-list-view').style.display = 'none';
+            document.getElementById('posts-editor-view').style.display = 'block';
+            document.getElementById('editor-title').innerText = 'MISSION: NEW ENTRANCE';
+            document.querySelectorAll('#posts-editor-view input, #posts-editor-view textarea').forEach(i => i.value = "");
+            document.getElementById('p-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('md-input').value = "# NEW POST TITLE\n\nWrite content here...";
+            updatePreview();
+        }
+
+        function hideEditor() {
+            document.getElementById('posts-list-view').style.display = 'block';
+            document.getElementById('posts-editor-view').style.display = 'none';
+        }
+
+        function autoSlug() {
+            document.getElementById('p-slug').value = document.getElementById('p-title').value
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-');
+        }
+
+        function updatePreview() {
+            const input = document.getElementById('md-input').value;
+            document.getElementById('md-preview').innerHTML = marked.parse(input);
+        }
+
+        function insertFmt(pre, post) {
+            const el = document.getElementById('md-input');
+            const s = el.selectionStart, e = el.selectionEnd, t = el.value;
+            el.value = t.substring(0, s) + pre + t.substring(s, e) + (post || pre) + t.substring(e);
+            el.focus();
+            updatePreview();
+        }
+
+        async function saveToGithub() {
+            const title = document.getElementById('p-title').value;
+            const slug = document.getElementById('p-slug').value;
+            const date = document.getElementById('p-date').value;
+            if (!title || !slug) { alert("Title and Slug are required!"); return; }
+
+            const fileName = `${date}-${slug}.md`;
+            const path = `_posts/${fileName}`;
+
+            toggleLoading(true, "SAVING TO GITHUB...");
+
+            // Get SHA if exists
+            const existing = await apiCall(path);
+            const sha = (existing && existing.sha) ? existing.sha : null;
+
+            const tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
+            const yaml = `---\nlayout: post\ntitle: '${title}'\ndate: ${date}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${slug}/\n---\n\n${document.getElementById('md-input').value}`;
+
+            // Handle UTF-8 for btoa
+            const contentEncoded = btoa(unescape(encodeURIComponent(yaml)));
+
+            const res = await apiCall(path, 'PUT', {
+                message: `${sha ? 'Update' : 'Create'} post: ${title}`,
+                content: contentEncoded,
+                sha: sha,
+                branch: GH_CONFIG.branch
+            });
+
+            toggleLoading(false);
+            if (res) {
+                showToast("Mission Successful! Code synced to GitHub.", "success");
+                hideEditor();
+                fetchLatestPosts(); // Refresh list
+            }
         }
 
         async function handleImageUpload(input) {
@@ -774,50 +933,27 @@
                     const start = editor.selectionStart;
                     editor.value = editor.value.substring(0, start) + mdTag + editor.value.substring(start);
                     updatePreview();
-                    showToast("Image Uploaded & Link Inserted!", "success");
+                    showToast("Image Uploaded Successfully!", "success");
                 }
             };
             reader.readAsDataURL(file);
         }
 
-        async function saveToGithub() {
-            const title = document.getElementById('p-title').value;
-            const slug = document.getElementById('p-slug').value;
-            const date = document.getElementById('p-date').value;
-            if (!title || !slug) { alert("Title and Slug are required!"); return; }
-
-            const fileName = `${date}-${slug}.md`;
-            const path = `_posts/${fileName}`;
-
-            toggleLoading(true, "SAVING POST...");
-
-            // Check if file exists to get SHA (for updates)
-            let sha = null;
-            const existing = await apiCall(path);
-            if (existing && existing.sha) sha = existing.sha;
-
-            let tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
-            const yaml = `---\nlayout: post\ntitle: '${title}'\ndate: ${date}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${slug}/\n---\n\n${document.getElementById('md-input').value}`;
-
-            const res = await apiCall(path, 'PUT', {
-                message: `${sha ? 'Update' : 'Create'} post: ${title}`,
-                content: btoa(unescape(encodeURIComponent(yaml))),
-                sha: sha,
-                branch: GH_CONFIG.branch
-            });
-
-            toggleLoading(false);
-            if (res) {
-                showToast("Mission Successful! Posted to GitHub.", "success");
-            }
+        function filterPosts(q) {
+            posts = originalPosts.filter(p => p.title.toLowerCase().includes(q.toLowerCase()));
+            renderPosts();
         }
 
-        window.onload = () => {
-            renderPosts();
-            // Load saved settings to UI
-            if (GH_CONFIG.token) document.getElementById('gh-token').value = GH_CONFIG.token;
-            if (GH_CONFIG.repo) document.getElementById('gh-repo').value = GH_CONFIG.repo;
-        };
+        function exportPost() {
+            let tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
+            let yaml = `---\nlayout: post\ntitle: '${document.getElementById('p-title').value}'\ndate: ${document.getElementById('p-date').value}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${document.getElementById('p-slug').value}/\n---\n\n${document.getElementById('md-input').value}`;
+            openModal(yaml);
+        }
+
+        function openModal(v) { document.getElementById('modal-result').value = v; document.getElementById('modal-overlay').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+        function copyResult() { document.getElementById('modal-result').select(); document.execCommand('copy'); showToast('Markdown Copied!', 'success'); }
+        function copyToClipboard(t) { let el = document.createElement("input"); document.body.appendChild(el); el.value = t; el.select(); document.execCommand("copy"); document.body.removeChild(el); showToast("Link Copied!", "success"); }
     </script>
 </body>
 
