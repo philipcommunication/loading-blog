@@ -445,15 +445,15 @@
                 ADMIN CENTER</div>
         </div>
         <ul class="menu-list">
-            <li class="menu-item active" onclick="navTo('posts')"><i class="fas fa-file-alt"></i> Posts</li>
-            <li class="menu-item" onclick="navTo('pages')"><i class="fas fa-copy"></i> Pages</li>
-            <li class="menu-item" onclick="navTo('news')"><i class="fas fa-broadcast-tower"></i> News Manager</li>
-            <li class="menu-item" onclick="navTo('assets')"><i class="fas fa-images"></i> Asset Library</li>
-            <li class="menu-item" onclick="navTo('config')"><i class="fas fa-cog"></i> Configuration</li>
+            <li class="menu-item active" onclick="navTo('posts')"><i class="fas fa-file-alt"></i> 포스팅 관리</li>
+            <li class="menu-item" onclick="navTo('pages')"><i class="fas fa-copy"></i> 페이지 관리</li>
+            <li class="menu-item" onclick="navTo('news')"><i class="fas fa-broadcast-tower"></i> 뉴스 센터</li>
+            <li class="menu-item" onclick="navTo('assets')"><i class="fas fa-images"></i> 이미지 보관함</li>
+            <li class="menu-item" onclick="navTo('config')"><i class="fas fa-cog"></i> 설정 (Config)</li>
         </ul>
         <div style="padding:25px;"><button class="btn"
                 style="width:100%; color:#999; border-color:#555; background:transparent;"
-                onclick="window.location.href='/'"><i class="fas fa-eye"></i> View Site</button></div>
+                onclick="window.location.href='/'"><i class="fas fa-eye"></i> 블로그 보기</button></div>
     </nav>
     <div class="main-wrapper">
         <header class="top-nav">
@@ -467,14 +467,14 @@
                     <div id="posts-list-view">
                         <div class="card">
                             <div class="card-header">
-                                <h3>Active Posts</h3><button class="btn btn-primary" onclick="showEditor()"><i
-                                        class="fas fa-plus"></i> NEW MISSION</button>
+                                <h3>작성된 포스팅</h3><button class="btn btn-primary" onclick="showEditor()"><i
+                                        class="fas fa-plus"></i> 새 글 쓰기</button>
                             </div>
                             <div style="padding:20px; border-bottom:1px solid #eee; background:#fafafa;">
                                 <div style="position:relative;"><i class="fas fa-search"
                                         style="position:absolute; left:15px; top:13px; color:#aaa;"></i><input
-                                        type="text" placeholder="Search title or content..."
-                                        style="padding-left:45px; height:45px;" oninput="filterPosts(this.value)"></div>
+                                        type="text" placeholder="제목 또는 내용 검색..." style="padding-left:45px; height:45px;"
+                                        oninput="filterPosts(this.value)"></div>
                             </div>
                             <div class="card-body" style="padding:0;">
                                 <table class="data-table">
@@ -494,41 +494,47 @@
                     <div id="posts-editor-view" style="display:none;">
                         <div class="card">
                             <div class="card-header">
-                                <h3 id="editor-title">MISSION CONTROL</h3>
+                                <h3 id="editor-title">포스트 에디터</h3>
                                 <div style="display:flex; gap:12px;"><button class="btn"
-                                        onclick="hideEditor()">CANCEL</button><button class="btn btn-primary"
+                                        onclick="hideEditor()">취소</button><button class="btn btn-primary"
                                         id="btn-save-post" onclick="saveToGithub()"><i
-                                            class="fas fa-cloud-upload-alt"></i> SAVE TO GITHUB</button><button
-                                        class="btn" onclick="exportPost()">CODE</button></div>
+                                            class="fas fa-cloud-upload-alt"></i> GitHub에 저장</button><button class="btn"
+                                        onclick="exportPost()">코드 보기</button></div>
                             </div>
                             <div class="card-body">
                                 <div class="form-row">
-                                    <div class="form-group" style="flex:2.5;"><label>Title</label><input type="text"
+                                    <div class="form-group" style="flex:2.5;"><label>포스트 제목</label><input type="text"
                                             id="p-title" oninput="autoSlug()"></div>
-                                    <div class="form-group" style="flex:1;"><label>Category</label><select id="p-cat">{%
+                                    <div class="form-group" style="flex:1;"><label>카테고리</label><select id="p-cat">{%
                                             for cat in site.categories %}<option value="{{ cat[0] }}">{{ cat[0]|upcase
                                                 }}</option>{% endfor %}</select></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group" style="flex:1.5;"><label>URL Slug</label><input type="text"
-                                            id="p-slug" placeholder="post-url-slug"></div>
-                                    <div class="form-group" style="flex:1;"><label>Publish Date</label><input
-                                            type="text" id="p-date" placeholder="2024-02-27"></div>
+                                    <div class="form-group" style="flex:2.5;"><label>포스트 제목</label><input type="text"
+                                            id="p-title" oninput="autoSlug()"></div>
+                                    <div class="form-group" style="flex:1;"><label>카테고리</label><select id="p-cat">{%
+                                            for cat in site.categories %}<option value="{{ cat[0] }}">{{ cat[0]|upcase
+                                                }}</option>{% endfor %}</select></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group" style="flex:1.5;"><label>Hashtags (comma
-                                            separated)</label><input type="text" id="p-tags"
-                                            placeholder="viral, game, review"></div>
-                                    <div class="form-group" style="flex:1;"><label>Feature Image Path</label><input
-                                            type="text" id="p-img" placeholder="/img/posts/thumb.png"></div>
+                                    <div class="form-group" style="flex:1.5;"><label>URL 주소 (슬러그)</label><input
+                                            type="text" id="p-slug" placeholder="post-url-slug"></div>
+                                    <div class="form-group" style="flex:1;"><label>발행 날짜</label><input type="text"
+                                            id="p-date" placeholder="2024-02-27"></div>
                                 </div>
-                                <div class="form-group"><label>Short Description (Excerpt)</label><textarea id="p-desc"
-                                        rows="2" placeholder="Brief summary for preview..."></textarea></div>
+                                <div class="form-row">
+                                    <div class="form-group" style="flex:1.5;"><label>해시태그 (콤마로 구분)</label><input
+                                            type="text" id="p-tags" placeholder="마케팅, 게임, 리뷰"></div>
+                                    <div class="form-group" style="flex:1;"><label>대표 이미지 경로</label><input type="text"
+                                            id="p-img" placeholder="/img/posts/thumb.png"></div>
+                                </div>
+                                <div class="form-group"><label>글 요약 (짧은 설명)</label><textarea id="p-desc" rows="2"
+                                        placeholder="미리보기에 표시될 요약 내용..."></textarea></div>
                                 <div class="image-upload-wrapper"
                                     onclick="document.getElementById('img-upload').click()">
                                     <i class="fas fa-image"
                                         style="font-size:1.5rem; color:#aaa; margin-bottom:10px;"></i>
-                                    <div>Click to Upload Image to GitHub (`/img/posts/`)</div>
+                                    <div>이미지 클릭/드래그하여 업로드 (`/img/posts/` 폴더로 저장)</div>
                                     <input type="file" id="img-upload" style="display:none" accept="image/*"
                                         onchange="handleImageUpload(this)">
                                 </div>
@@ -546,7 +552,7 @@
                                         onclick="insertFmt('- ')"><i class="fas fa-list"></i></button>
                                 </div>
                                 <div class="editor-container"><textarea id="md-input" oninput="updatePreview()"
-                                        placeholder="Load content and start writing..."></textarea>
+                                        placeholder="이곳에 글 내용을 작성하세요. (마크다운 지원)"></textarea>
                                     <div id="md-preview"></div>
                                 </div>
                             </div>
@@ -557,16 +563,15 @@
                 <section id="panel-news" class="section-panel">
                     <div class="card">
                         <div class="card-header">
-                            <h3>News Items</h3><button class="btn btn-primary" onclick="exportNews()">Export
-                                YAML</button>
+                            <h3>뉴스 데이터 관리</h3><button class="btn btn-primary" onclick="exportNews()">YAML 코드 추출</button>
                         </div>
                         <div class="card-body">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Type</th>
-                                        <th>Title</th>
-                                        <th>Date</th>
+                                        <th>분류</th>
+                                        <th>제목</th>
+                                        <th>날짜</th>
                                     </tr>
                                 </thead>
                                 <tbody id="news-tbody"></tbody>
@@ -578,7 +583,7 @@
                 <section id="panel-assets" class="section-panel">
                     <div class="card">
                         <div class="card-header">
-                            <h3>Asset Library</h3>
+                            <h3>이미지 보관함</h3>
                         </div>
                         <div class="card-body">
                             <div id="assets-grid"
@@ -591,33 +596,29 @@
                 <section id="panel-config" class="section-panel">
                     <div class="card">
                         <div class="card-header">
-                            <h3>GitHub API Connection</h3><button class="btn btn-primary"
-                                onclick="saveGHSettings()">SAVE
-                                SETTINGS</button>
+                            <h3>GitHub API 연결 설정</h3><button class="btn btn-primary" onclick="saveGHSettings()">설정
+                                저장하기</button>
                         </div>
                         <div class="card-body">
                             <div class="form-row">
-                                <div class="form-group" style="flex:2;"><label>GitHub Personal Access
-                                        Token</label><input type="password" id="gh-token"
-                                        placeholder="ghp_xxxxxxxxxxxx"></div>
-                                <div class="form-group" style="flex:1;"><label>Repo (Owner/Name)</label><input
-                                        type="text" id="gh-repo" placeholder="username/repo"
-                                        value="philipcommunication/loading-blog">
+                                <div class="form-group" style="flex:2;"><label>GitHub 개인 액세스 토큰 (PAT)</label><input
+                                        type="password" id="gh-token" placeholder="ghp_로 시작하는 토큰 입력"></div>
+                                <div class="form-group" style="flex:1;"><label>저장소 주소 (아이디/이름)</label><input type="text"
+                                        id="gh-repo" placeholder="아이디/블로그이름" value="philipcommunication/loading-blog">
                                 </div>
                             </div>
-                            <p style="font-size:0.8rem; color:#888; margin-top:0;">* Your token is stored only in your
-                                browser's local storage.</p>
+                            <p style="font-size:0.8rem; color:#888; margin-top:0;">* 이 토큰은 브라우저의 로컬 스토리지에만 안전하게 저장됩니다.
+                            </p>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <h3>Site Configuration</h3><button class="btn btn-primary" onclick="exportConfig()">Generate
-                                YAML</button>
+                            <h3>사이트 상세 정보</h3><button class="btn btn-primary" onclick="exportConfig()">YAML 생성</button>
                         </div>
                         <div class="card-body">
-                            <div class="form-group"><label>Site Title</label><input type="text" id="c-title"
+                            <div class="form-group"><label>블로그 이름 (제목)</label><input type="text" id="c-title"
                                     value="{{ site.title }}"></div>
-                            <div class="form-group"><label>Tagline</label><input type="text" id="c-tag"
+                            <div class="form-group"><label>태그라인 (슬로건)</label><input type="text" id="c-tag"
                                     value="{{ site.tagline }}"></div>
                         </div>
                     </div>
@@ -626,14 +627,14 @@
                 <section id="panel-pages" class="section-panel">
                     <div class="card">
                         <div class="card-header">
-                            <h3>Pages</h3>
+                            <h3>일반 페이지 목록</h3>
                         </div>
                         <div class="card-body">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>URL</th>
-                                        <th>Title</th>
+                                        <th>주소 (Path)</th>
+                                        <th>이름 (Title)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pages-tbody"></tbody>
@@ -646,17 +647,17 @@
     </div>
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <div id="loading-text" style="font-family:var(--pixel); color:#333; font-weight:700;">PROCESSING...</div>
+        <div id="loading-text" style="font-family:var(--pixel); color:#333; font-weight:700;">작업 진행 중...</div>
     </div>
     <div class="toast" id="toast"></div>
     <div class="overlay" id="modal-overlay">
         <div class="modal">
             <div class="card-header">
-                <h3>Generated Output</h3><button class="btn" onclick="closeModal()">Close</button>
+                <h3>생성된 YAML 코드</h3><button class="btn" onclick="closeModal()">닫기</button>
             </div>
             <div style="background:#1e1e1e; padding:10px;"><textarea id="modal-result" readonly></textarea></div>
             <div style="padding:20px; text-align:right; background:white;"><button class="btn btn-primary"
-                    onclick="copyResult()"><i class="fas fa-copy"></i> COPY TO CLIPBOARD</button></div>
+                    onclick="copyResult()"><i class="fas fa-copy"></i> 클립보드에 복사</button></div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -702,7 +703,7 @@
             repo = repo.replace(/^\/+|\/+$/g, '');
 
             if (repo.split('/').length < 2) {
-                showToast("Invalid Repo format. Use 'Owner/Name'", "error");
+                showToast("저장소 형식이 올바르지 않습니다. '아이디/이름' 형식으로 입력해주세요.", "error");
                 return;
             }
 
@@ -714,7 +715,7 @@
             document.getElementById('gh-token').value = token;
             document.getElementById('gh-repo').value = repo;
 
-            showToast("GitHub Settings Saved", "success");
+            showToast("GitHub 설정이 저장되었습니다.", "success");
             fetchLatestPosts();
         }
 
@@ -723,10 +724,16 @@
             document.querySelectorAll('.section-panel').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             document.getElementById('panel-' + p).classList.add('active');
-            if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
+
+            // Activate corresponding menu item
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                if (item.getAttribute('onclick').includes(`navTo('${p}')`)) item.classList.add('active');
+            });
 
             const titleEl = document.getElementById('current-view-title');
-            if (titleEl) titleEl.innerText = p.toUpperCase().replace('PANEL-', '');
+            const titles = { 'posts': '포스팅 관리', 'news': '뉴스 센터', 'assets': '이미지 보관함', 'config': '사이트 설정', 'pages': '페이지 관리' };
+            if (titleEl) titleEl.innerText = titles[p] || p.toUpperCase();
 
             if (p === 'posts') renderPosts();
             if (p === 'news') fetchNews();
@@ -752,7 +759,7 @@
         // --- CORE API ENGINE ---
         async function apiCall(path, method = 'GET', body = null) {
             if (!GH_CONFIG.token) {
-                showToast("Token missing! Check Configuration.", "error");
+                showToast("GitHub 토큰이 없습니다! 설정 탭에서 PAT를 입력해주세요.", "error");
                 return null;
             }
             const url = `https://api.github.com/repos/${GH_CONFIG.repo}/contents/${path}`;
@@ -773,8 +780,8 @@
                 if (!res.ok) {
                     const err = await res.json();
                     if (res.status === 404 && method === 'GET') return null;
-                    if (res.status === 401) showToast("Invalid Token! Please check your PAT.", "error");
-                    else showToast(`GitHub Error (${res.status}): ${err.message}`, "error");
+                    if (res.status === 401) showToast("유효하지 않은 토큰입니다! PAT를 다시 확인해주세요.", "error");
+                    else showToast(`GitHub 에러 (${res.status}): ${err.message}`, "error");
                     return null;
                 }
                 return await res.json();
@@ -785,14 +792,14 @@
                 console.error("Target URL:", url);
                 console.groupEnd();
 
-                showToast(`Connection Failed: ${e.message}. Press F12 for details.`, "error");
+                showToast(`연결 실패: ${e.message}. 상세 내용은 F12 콘솔을 확인하세요.`, "error");
                 return null;
             }
         }
 
         // --- POST MANAGEMENT ---
         async function fetchLatestPosts() {
-            toggleLoading(true, "FETCHING RECENT POSTS...");
+            toggleLoading(true, "포스팅 목록을 불러오는 중...");
             const data = await apiCall('_posts');
             toggleLoading(false);
             if (!data || !Array.isArray(data)) return;
@@ -820,7 +827,7 @@
             const tbody = document.getElementById('posts-tbody');
             if (!tbody) return;
             if (posts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? 'Checking posts in _posts/...' : 'Please set GitHub Token in Config tab first.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">${GH_CONFIG.token ? '_posts/ 폴더에서 글을 찾는 중...' : '설정 탭에서 GitHub 토큰을 먼저 입력해주세요.'}</td></tr>`;
                 return;
             }
             tbody.innerHTML = posts.map(p => `
@@ -828,7 +835,7 @@
                     <td style="font-weight:600;">${p.title}</td>
                     <td><span style="font-size:0.75rem; color:#f03e2f; background:rgba(240,62,47,0.1); padding:4px 10px; border-radius:15px; font-weight:700;">${p.cat}</span></td>
                     <td>${p.date}</td>
-                    <td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="openForEdit('${p.path}')">MODIFY</button></td>
+                    <td><button class="btn btn-primary" style="padding:4px 12px; font-size:0.75rem" onclick="openForEdit('${p.path}')">수정하기</button></td>
                 </tr>
             `).join('');
         }
@@ -837,7 +844,7 @@
         async function fetchNews() {
             const tbody = document.getElementById('news-tbody');
             if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">Fetching news board...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">뉴스 보드를 불러오는 중...</td></tr>`;
 
             const file = await apiCall('_data/news.yml');
             if (!file) return;
@@ -847,7 +854,7 @@
                 newsData = jsyaml.load(content) || [];
                 renderNews();
             } catch (e) {
-                showToast("Failed to parse News YAML", "error");
+                showToast("뉴스 YAML 파싱 실패", "error");
             }
         }
 
@@ -867,7 +874,7 @@
                 const btn = document.createElement('button');
                 btn.id = 'btn-save-news';
                 btn.className = 'btn btn-primary';
-                btn.innerHTML = '<i class="fas fa-save"></i> SAVE CHANGES';
+                btn.innerHTML = '<i class="fas fa-save"></i> 변경사항 저장';
                 btn.onclick = saveNewsToGithub;
                 actions.appendChild(btn);
             }
@@ -878,7 +885,7 @@
         }
 
         async function saveNewsToGithub() {
-            toggleLoading(true, "SAVING NEWS...");
+            toggleLoading(true, "뉴스 저장 중...");
             const yaml = jsyaml.dump(newsData);
             const file = await apiCall('_data/news.yml');
             const sha = file ? file.sha : null;
@@ -891,14 +898,14 @@
             });
 
             toggleLoading(false);
-            if (res) showToast("News updated successfully!", "success");
+            if (res) showToast("뉴스가 성공적으로 수정되었습니다!", "success");
         }
 
         // --- PAGE MANAGEMENT ---
         async function fetchPages() {
             const tbody = document.getElementById('pages-tbody');
             if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">Fetching pages...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;">페이지 목록을 불러오는 중...</td></tr>`;
 
             const data = await apiCall('');
             if (!data) return;
@@ -915,7 +922,7 @@
                 <tr>
                     <td>${p.path}</td>
                     <td style="font-weight:600;">${p.title}</td>
-                    <td style="text-align:right;"><button class="btn" style="padding:4px 12px; font-size:0.75rem; border-color:var(--primary); color:var(--primary);" onclick="openForEdit('${p.path}')">MODIFY</button></td>
+                    <td style="text-align:right;"><button class="btn" style="padding:4px 12px; font-size:0.75rem; border-color:var(--primary); color:var(--primary);" onclick="openForEdit('${p.path}')">수정하기</button></td>
                 </tr>
             `).join('');
         }
@@ -924,7 +931,7 @@
         async function fetchAssets() {
             const grid = document.getElementById('assets-grid');
             if (!grid) return;
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px;">Fetching assets from GitHub...</div>`;
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px;">GitHub에서 이미지를 불러오는 중...</div>`;
 
             const data = await apiCall('img/posts');
             if (!data) return;
@@ -943,13 +950,13 @@
                         <img src="${a.path}" style="max-width:100%; max-height:100%; object-fit:contain;">
                     </div>
                     <div style="font-size:0.75rem; color:#777; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:8px;">${a.name}</div>
-                    <button class="btn" style="font-size:0.7rem; padding:5px; width:100%; border-color:#e0e0e0;" onclick="copyToClipboard('${a.path}')">COPY PATH</button>
+                    <button class="btn" style="font-size:0.7rem; padding:5px; width:100%; border-color:#e0e0e0;" onclick="copyToClipboard('${a.path}')">경로 복사</button>
                 </div>
             `).join('');
         }
 
         async function openForEdit(path) {
-            toggleLoading(true, "DOWNLOADING MISSION CONTENT...");
+            toggleLoading(true, "내용을 다운로드 중...");
             const file = await apiCall(path);
             toggleLoading(false);
             if (!file) return;
@@ -980,7 +987,7 @@
             document.getElementById('posts-editor-view').style.display = 'block';
 
             const isPage = !path.includes('_posts/');
-            document.getElementById('editor-title').innerText = isPage ? 'MISSION: MODIFY PAGE' : 'MISSION: MODIFY POST';
+            document.getElementById('editor-title').innerText = isPage ? '페이지 수정' : '포스트 수정';
 
             // Fill form
             document.getElementById('p-title').value = metadata.title || '';
@@ -1000,10 +1007,10 @@
         function showEditor() {
             document.getElementById('posts-list-view').style.display = 'none';
             document.getElementById('posts-editor-view').style.display = 'block';
-            document.getElementById('editor-title').innerText = 'MISSION: NEW ENTRANCE';
+            document.getElementById('editor-title').innerText = '포스트 작성/수정';
             document.querySelectorAll('#posts-editor-view input, #posts-editor-view textarea').forEach(i => i.value = "");
             document.getElementById('p-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('md-input').value = "# NEW POST TITLE\n\nWrite content here...";
+            document.getElementById('md-input').value = "# 새로운 글 제목\n\n여기에 내용을 작성하세요...";
             updatePreview();
         }
 
@@ -1036,7 +1043,7 @@
             const title = document.getElementById('p-title').value;
             const slug = document.getElementById('p-slug').value;
             const date = document.getElementById('p-date').value;
-            if (!title || !slug) { alert("Title and Slug are required!"); return; }
+            if (!title || !slug) { alert("제목과 URL 주소(슬러그)는 필수입니다!"); return; }
 
             let path = window.currentEditPath;
             const isEditing = !!path;
@@ -1047,7 +1054,7 @@
                 path = `_posts/${fileName}`;
             }
 
-            toggleLoading(true, "SAVING TO GITHUB...");
+            toggleLoading(true, "GitHub에 저장 중...");
 
             // Get SHA if exists
             const existing = await apiCall(path);
@@ -1068,7 +1075,7 @@
 
             toggleLoading(false);
             if (res) {
-                showToast("Mission Successful! Code synced to GitHub.", "success");
+                showToast("저장 성공! GitHub에 반영되었습니다.", "success");
                 hideEditor();
                 window.currentEditPath = null;
                 if (path.includes('_posts/')) fetchLatestPosts(); else fetchPages();
@@ -1081,7 +1088,7 @@
             const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
             const path = `img/posts/${fileName}`;
 
-            toggleLoading(true, "UPLOADING IMAGE...");
+            toggleLoading(true, "이미지 업로드 중...");
 
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -1099,7 +1106,7 @@
                     const start = editor.selectionStart;
                     editor.value = editor.value.substring(0, start) + mdTag + editor.value.substring(start);
                     updatePreview();
-                    showToast("Image Uploaded Successfully!", "success");
+                    showToast("이미지가 성공적으로 업로드되었습니다!", "success");
                 }
             };
             reader.readAsDataURL(file);
@@ -1118,8 +1125,8 @@
 
         function openModal(v) { document.getElementById('modal-result').value = v; document.getElementById('modal-overlay').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        function copyResult() { document.getElementById('modal-result').select(); document.execCommand('copy'); showToast('Markdown Copied!', 'success'); }
-        function copyToClipboard(t) { let el = document.createElement("input"); document.body.appendChild(el); el.value = t; el.select(); document.execCommand("copy"); document.body.removeChild(el); showToast("Link Copied!", "success"); }
+        function copyResult() { document.getElementById('modal-result').select(); document.execCommand('copy'); showToast('코드가 복사되었습니다!', 'success'); }
+        function copyToClipboard(t) { let el = document.createElement("input"); document.body.appendChild(el); el.value = t; el.select(); document.execCommand("copy"); document.body.removeChild(el); showToast("링크가 복사되었습니다!", "success"); }
     </script>
 </body>
 
