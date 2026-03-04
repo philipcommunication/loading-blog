@@ -93,7 +93,7 @@ body.game-mode {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 150px;
+    height: 150px !important;
     background: var(--gb-body);
     /* 사이드 패널과 맞닿는 부분의 선을 제거하기 위해 border-top 삭제 */
     z-index: 2000;
@@ -101,32 +101,32 @@ body.game-mode {
     justify-content: space-between;
     align-items: center;
     padding: 0 60px;
-    border-top: none;
-    box-shadow: none;
+    border-top: none !important;
+    box-shadow: none !important;
 
     @media (max-width: 1400px) {
-      height: 140px;
+      height: 140px !important;
       padding: 0 50px;
     }
 
     @media (max-width: 1200px) {
-      height: 140px;
+      height: 140px !important;
       padding: 0 40px;
     }
 
     @media (max-width: 1024px) {
-      height: 120px;
+      height: 120px !important;
       padding: 0 30px;
     }
 
     @media (max-width: 768px) {
-      height: 90px;
+      height: 100px !important;
       padding: 0 15px;
       border-top-width: 6px;
     }
 
     @media (max-width: 576px) {
-      height: 70px;
+      height: 80px !important;
       padding: 0 10px;
       border-top-width: 4px;
     }
@@ -381,23 +381,31 @@ body.game-mode {
     right: 0;
     width: 100%;
     z-index: 3000;
-    height: 120px;
+    height: 120px !important;
     display: flex;
     align-items: center;
     box-shadow: none !important;
     /* 이음새 선을 방지하기 위해 그림자 제거 */
-    border-bottom: none !important;
+    border: none !important;
 
     @media (max-width: 1400px) {
-      height: 110px;
+      height: 110px !important;
     }
 
     @media (max-width: 1200px) {
-      height: 110px;
+      height: 110px !important;
     }
 
     @media (max-width: 1024px) {
-      height: 100px;
+      height: 100px !important;
+    }
+
+    @media (max-width: 768px) {
+      height: 90px !important;
+    }
+
+    @media (max-width: 576px) {
+      height: 80px !important;
     }
 
     @media (max-width: 768px) {
@@ -667,8 +675,8 @@ body.game-mode {
   /* 3. 사이드 하드웨어 패널 (헤더와 연결) */
   .hardware-side {
     position: fixed;
-    top: 120px;
-    bottom: 150px;
+    top: 120px !important;
+    bottom: 150px !important;
     width: 140px;
     background: var(--gb-body);
     z-index: 2800;
@@ -678,21 +686,23 @@ body.game-mode {
     align-items: center;
     justify-content: center;
     /* 검정색 선 제거를 위해 그림자 및 보더 제거 */
-    box-shadow: none;
-
-    @media (max-width: 1600px) {
-      width: 120px;
-    }
+    box-shadow: none !important;
 
     @media (max-width: 1400px) {
+      top: 110px !important;
+      bottom: 140px !important;
       width: 100px;
     }
 
     @media (max-width: 1200px) {
+      top: 110px !important;
+      bottom: 140px !important;
       width: 80px;
     }
 
     @media (max-width: 1024px) {
+      top: 100px !important;
+      bottom: 120px !important;
       width: 60px;
     }
 
@@ -898,7 +908,8 @@ body.game-mode {
     max-width: var(--max-site-width);
     width: calc(100% - 16vw);
     /* 좌우 8vw씩 제외 */
-    margin: 120px auto 0;
+    margin: 120px auto 0 !important;
+    margin-bottom: 0 !important;
 
     @media (min-width: 1750px) {
       width: calc(100% - 280px);
@@ -908,51 +919,45 @@ body.game-mode {
       width: 100%;
     }
 
-    @media (max-width: 1400px) {
-      margin-top: 110px;
-    }
-
-    @media (max-width: 1024px) {
-      margin-top: 100px;
-    }
-
-    @media (max-width: 768px) {
-      margin-top: 90px;
-    }
-
     /* leave some horizontal breathing room for the side grips */
-    border-top: none !important;
-    border-bottom: none !important;
-    padding: 0 40px 140px 40px;
-    /* 좌우 패딩 현실화 */
+    border: none !important;
+    padding: 0 40px 150px 40px !important;
+    /* footer height */
     box-shadow: none !important;
-    /* 상단 그림자 및 모든 인셋 쉐도우 제거 */
-    min-height: calc(100vh - 270px);
+    min-height: calc(100vh - 270px) !important;
+    /* 120 + 150 */
     background-color: #1a1a1a;
     position: relative;
     z-index: 10;
 
     @media (max-width: 1400px) {
-      padding: 0 30px 120px 30px;
-      margin-top: 110px;
+      margin-top: 110px !important;
+      padding: 0 30px 140px 30px !important;
+      min-height: calc(100vh - 250px) !important;
+      /* 110 + 140 */
     }
 
     @media (max-width: 1024px) {
-      padding: 0 20px 100px 20px;
-      margin-top: 100px;
+      margin-top: 100px !important;
+      padding: 0 20px 120px 20px !important;
+      min-height: calc(100vh - 220px) !important;
+      /* 100 + 120 */
     }
 
     @media (max-width: 768px) {
-      padding: 0 15px 90px 15px;
-      margin-top: 90px;
+      margin-top: 90px !important;
+      padding: 0 15px 100px 15px !important;
+      min-height: calc(100vh - 190px) !important;
+      /* 90 + 100 */
       border-width: 4px;
       border-bottom: none !important;
     }
 
     @media (max-width: 576px) {
-      padding: 0 10px 80px 10px;
-      margin-top: 80px;
-      margin-bottom: 0;
+      margin-top: 80px !important;
+      padding: 0 10px 80px 10px !important;
+      min-height: calc(100vh - 160px) !important;
+      /* 80 + 80 */
     }
 
     /* 홈 화면 섹션 공통 스타일 */
@@ -1594,6 +1599,7 @@ body.game-mode {
     }
 
     header.masthead {
+      margin-top: 0 !important;
       background-color: #000;
       background-repeat: no-repeat;
       background-position: center center;
@@ -1602,7 +1608,7 @@ body.game-mode {
       padding: 0 !important;
       position: relative;
       overflow: hidden;
-      margin-bottom: 60px;
+      margin-bottom: 60px !important;
       min-height: 860px;
       /* 높이 추가 확장 */
       display: flex;
