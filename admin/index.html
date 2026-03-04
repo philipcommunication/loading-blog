@@ -751,11 +751,10 @@
             const url = `https://api.github.com/repos/${GH_CONFIG.repo}/contents/${path}`;
             const options = {
                 method,
-                mode: 'cors', // Explicitly set CORS mode
+                mode: 'cors',
                 headers: {
-                    'Authorization': `Bearer ${GH_CONFIG.token}`, // Modern Bearer token format
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Cache-Control': 'no-cache'
+                    'Authorization': `token ${GH_CONFIG.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
                 }
             };
             if (body) options.body = JSON.stringify(body);
