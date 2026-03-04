@@ -138,9 +138,36 @@ body.game-mode {
       background: #2a2a2a;
       transform: scale(0.85);
       border-radius: 4px;
+      margin: 0;
+      /* Clear any default margin */
       box-shadow:
         inset 0 2px 4px rgba(255, 255, 255, 0.1),
         0 4px 10px rgba(0, 0, 0, 0.5);
+
+      /* Responsive Sizes for D-Pad to stay inside the bar */
+      @media (max-width: 1400px) {
+        width: 85px;
+        height: 85px;
+        transform: scale(0.75);
+      }
+
+      @media (max-width: 1024px) {
+        width: 70px;
+        height: 70px;
+        transform: scale(0.7);
+      }
+
+      @media (max-width: 768px) {
+        width: 55px;
+        height: 55px;
+        transform: scale(0.65);
+      }
+
+      @media (max-width: 576px) {
+        width: 45px;
+        height: 45px;
+        transform: scale(0.6);
+      }
 
       &::before {
         content: "";
@@ -653,22 +680,20 @@ body.game-mode {
     /* 검정색 선 제거를 위해 그림자 및 보더 제거 */
     box-shadow: none;
 
-    @media (max-width: 1400px) {
-      top: 110px;
-      bottom: 140px;
+    @media (max-width: 1600px) {
       width: 120px;
     }
 
-    @media (max-width: 1200px) {
-      top: 110px;
-      bottom: 140px;
+    @media (max-width: 1400px) {
       width: 100px;
     }
 
+    @media (max-width: 1200px) {
+      width: 80px;
+    }
+
     @media (max-width: 1024px) {
-      top: 100px;
-      bottom: 120px;
-      width: 85px;
+      width: 60px;
     }
 
     @media (max-width: 768px) {
@@ -818,28 +843,37 @@ body.game-mode {
         height: 8px;
       }
 
-      @media (max-width: 768px) {
-        width: 25px;
-        height: 6px;
+      /* 사이드바 너비에 따른 내부 요소 스케일링 */
+      @media (max-width: 1400px) {
+        transform: scale(0.85);
+        margin: 8px 0;
+      }
+
+      @media (max-width: 1200px) {
+        transform: scale(0.7);
+        margin: 5px 0;
+      }
+
+      @media (max-width: 1024px) {
+        transform: scale(0.55);
+        margin: 2px 0;
       }
     }
-  }
 
-  .ls-grip {
-    left: 0;
-    border-right: none;
-
-    @media (max-width: 1400px) {
-      width: 120px;
+    &.ls-grip {
+      left: 0 !important;
+      border-right: none;
+      width: 8vw;
+      min-width: 50px;
+      max-width: 140px;
     }
-  }
 
-  .rs-grip {
-    right: 0;
-    border-left: none;
-
-    @media (max-width: 1400px) {
-      width: 120px;
+    &.rs-grip {
+      right: 0 !important;
+      border-left: none;
+      width: 8vw;
+      min-width: 50px;
+      max-width: 140px;
     }
 
     .serial-box {
@@ -862,13 +896,37 @@ body.game-mode {
     background-size: cover !important;
     background-attachment: fixed !important;
     max-width: var(--max-site-width);
+    width: calc(100% - 16vw);
+    /* 좌우 8vw씩 제외 */
     margin: 120px auto 0;
+
+    @media (min-width: 1750px) {
+      width: calc(100% - 280px);
+    }
+
+    @media (max-width: 750px) {
+      width: 100%;
+    }
+
+    @media (max-width: 1400px) {
+      margin-top: 110px;
+    }
+
+    @media (max-width: 1024px) {
+      margin-top: 100px;
+    }
+
+    @media (max-width: 768px) {
+      margin-top: 90px;
+    }
+
     /* leave some horizontal breathing room for the side grips */
     border-top: none !important;
     border-bottom: none !important;
     padding: 0 40px 140px 40px;
     /* 좌우 패딩 현실화 */
-    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.8);
+    box-shadow: none !important;
+    /* 상단 그림자 및 모든 인셋 쉐도우 제거 */
     min-height: calc(100vh - 270px);
     background-color: #1a1a1a;
     position: relative;
@@ -1573,7 +1631,8 @@ body.game-mode {
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: transparent !important;
+        /* 모든 페이지 헤더 오버레이 제거 */
         z-index: 1;
       }
 
@@ -2192,6 +2251,72 @@ body.game-mode {
       }
     }
   }
+
+  /* 홈 디자인 시스템 전역화: 모든 페이지에서 동일한 뉴스보드 및 구분선 스타일 사용 가능 */
+  .news-board {
+    max-width: 550px;
+    margin: 0 auto;
+    background: rgba(30, 31, 30, 0.9);
+    border: 6px solid var(--gb-black);
+    border-radius: 12px;
+    overflow: hidden;
+
+    .news-header,
+    .news-list li a {
+      display: grid !important;
+      grid-template-columns: 120px minmax(0, 1fr) 90px !important;
+      gap: 0 !important;
+      align-items: center !important;
+      padding: 10px 15px !important;
+    }
+
+    .news-header {
+      background: #444;
+      color: #aaa;
+      font-family: var(--font-pixel);
+      font-size: 10px;
+    }
+
+    .news-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li a {
+        color: #fff;
+        font-family: 'Galmuri11';
+        transition: background 0.2s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: #a3ff00;
+        }
+      }
+    }
+
+    .news-type {
+      background: var(--gb-red);
+      color: #fff;
+      padding: 3px 6px;
+      font-size: 9px;
+      font-family: var(--font-pixel);
+    }
+
+    .news-date {
+      color: #888;
+      font-size: 10px;
+      font-family: var(--font-pixel);
+      text-align: right;
+    }
+  }
+
+  .section-divider {
+    border: none;
+    height: 10px;
+    background: repeating-linear-gradient(45deg, #222, #222 10px, #333 10px, #333 20px);
+    margin: 50px 0;
+    opacity: 0.5;
+  }
 }
 
 .gb-header-decor #mainNav .navbar-toggler {
@@ -2215,92 +2340,5 @@ body.game-mode {
     top: 50%;
     transform: translateY(-50%);
     z-index: 3060;
-  }
-}
-
-/* Apply responsive dpad globally so any page using .dpad-sticky keeps shape */
-.dpad-sticky {
-  width: 100px;
-  height: 100px;
-  position: relative;
-  background: var(--gb-black);
-  transform: scale(0.85);
-
-  @media (max-width: 1400px) {
-    width: 85px;
-    height: 85px;
-    transform: scale(0.75);
-  }
-
-  @media (max-width: 1024px) {
-    width: 70px;
-    height: 70px;
-    transform: scale(0.7);
-  }
-
-  @media (max-width: 768px) {
-    width: 60px;
-    height: 60px;
-    transform: scale(0.65);
-  }
-
-  @media (max-width: 576px) {
-    width: 50px;
-    height: 50px;
-    transform: scale(0.6);
-  }
-
-  &,
-  .dpad-sticky {
-
-    /* 전역 반응형 크기 유지 */
-    @media (max-width: 1400px) {
-      width: 85px;
-      height: 85px;
-      transform: scale(0.75);
-    }
-
-    @media (max-width: 1024px) {
-      width: 70px;
-      height: 70px;
-      transform: scale(0.7);
-    }
-
-    @media (max-width: 768px) {
-      width: 60px;
-      height: 60px;
-      transform: scale(0.65);
-    }
-
-    @media (max-width: 576px) {
-      width: 50px;
-      height: 50px;
-      transform: scale(0.6);
-    }
-  }
-
-  background: #2a2a2a;
-  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1),
-  0 4px 10px rgba(0, 0, 0, 0.5);
-
-  &::before {
-    background: #2a2a2a;
-    box-shadow: 0 2px 0 #111;
-  }
-
-  &::after {
-    background: #2a2a2a;
-    box-shadow: 2px 0 0 #111;
-  }
-
-  .center-hole {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 22%;
-    height: 22%;
-    background: #111;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
   }
 }
