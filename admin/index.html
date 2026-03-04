@@ -688,10 +688,23 @@
         };
 
         function saveGHSettings() {
-            localStorage.setItem('gh_token', document.getElementById('gh-token').value);
-            localStorage.setItem('gh_repo', document.getElementById('gh-repo').value);
-            GH_CONFIG.token = document.getElementById('gh-token').value;
-            GH_CONFIG.repo = document.getElementById('gh-repo').value;
+            let token = document.getElementById('gh-token').value.trim();
+            let repo = document.getElementById('gh-repo').value.trim();
+
+            // Handle full URL inputs
+            if (repo.includes('github.com/')) {
+                repo = repo.split('github.com/')[1].replace('.git', '');
+            }
+
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_repo', repo);
+            GH_CONFIG.token = token;
+            GH_CONFIG.repo = repo;
+
+            // Update UI with cleaned values
+            document.getElementById('gh-token').value = token;
+            document.getElementById('gh-repo').value = repo;
+
             showToast("GitHub Settings Saved", "success");
             fetchLatestPosts(); // Refresh list immediately
         }
@@ -711,18 +724,20 @@
             if (!t) return;
             t.innerText = msg;
             t.className = `toast show ${type}`;
-            setTimeout(() => t.classList.remove('show'), 4000);
+            setTimeout(() => { if (t) t.classList.remove('show'); }, 4000);
         }
 
         function toggleLoading(show, text) {
-            document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
-            if (text) document.getElementById('loading-text').innerText = text;
+            const overlay = document.getElementById('loading-overlay');
+            const txtEl = document.getElementById('loading-text');
+            if (overlay) overlay.style.display = show ? 'flex' : 'none';
+            if (show && txtEl && text) txtEl.innerText = text;
         }
 
         // --- CORE API ENGINE ---
         async function apiCall(path, method = 'GET', body = null) {
             if (!GH_CONFIG.token) {
-                showToast("GitHub Token is missing! Check Configuration.", "error");
+                showToast("Token missing! Check Configuration.", "error");
                 return null;
             }
             const url = `https://api.github.com/repos/${GH_CONFIG.repo}/contents/${path}`;
@@ -739,13 +754,15 @@
                 const res = await fetch(url, options);
                 if (!res.ok) {
                     const err = await res.json();
-                    if (res.status === 404 && method === 'GET') return null; // File not found is OK for check
-                    showToast(`GitHub Error: ${err.message}`, "error");
+                    if (res.status === 404 && method === 'GET') return null;
+                    if (res.status === 401) showToast("Invalid Token! Refresh PAT.", "error");
+                    else showToast(`GitHub Error (${res.status}): ${err.message}`, "error");
                     return null;
                 }
                 return await res.json();
             } catch (e) {
-                showToast(`Request Failed: ${e.message}`, "error");
+                console.error("Fetch Error:", e);
+                showToast(`Connection Failed: Check Storage Path or Network.`, "error");
                 return null;
             }
         }
