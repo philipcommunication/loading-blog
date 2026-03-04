@@ -691,9 +691,18 @@
             let token = document.getElementById('gh-token').value.trim();
             let repo = document.getElementById('gh-repo').value.trim();
 
-            // Handle full URL inputs
+            // 1. URL 정리: https://github.com/... 전체 주소 처리
             if (repo.includes('github.com/')) {
-                repo = repo.split('github.com/')[1].replace('.git', '');
+                repo = repo.split('github.com/')[1];
+            }
+            // 2. .git 확장자 제거
+            repo = repo.replace(/\.git$/, '');
+            // 3. 앞뒤 슬래시(/) 제거 및 양식 검사
+            repo = repo.replace(/^\/+|\/+$/g, '');
+
+            if (repo.split('/').length < 2) {
+                showToast("Invalid Repo format. Use 'Owner/Name'", "error");
+                return;
             }
 
             localStorage.setItem('gh_token', token);
@@ -701,12 +710,11 @@
             GH_CONFIG.token = token;
             GH_CONFIG.repo = repo;
 
-            // Update UI with cleaned values
             document.getElementById('gh-token').value = token;
             document.getElementById('gh-repo').value = repo;
 
             showToast("GitHub Settings Saved", "success");
-            fetchLatestPosts(); // Refresh list immediately
+            fetchLatestPosts();
         }
 
         // --- NAVIGATION & UI ---
