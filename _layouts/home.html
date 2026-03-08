@@ -6,7 +6,7 @@ layout: default
 {% if page.background %}
 <header class="masthead" style="background-image: url('{{ page.background | relative_url }}')">
   {% else %}
-  <header class="masthead" style="background-image: url('/img/loading%20blog%20Character%20main.png')">
+  <header class="masthead" style="background-image: url('/img/loading blog Character main.webp')">
     {% endif %}
     <div class="overlay"></div>
     <div class="container-fluid" style="max-width: var(--max-site-width);">
@@ -16,12 +16,12 @@ layout: default
             <div class="header-flex-wrapper">
               <div class="header-text-side">
                 <h1 class="main-title">Loading Blog</h1>
-                <span class="subheading">마케팅을 게임처럼 쉽게 <img src="/img/joystick_img.png" alt="Joystick"
+                <span class="subheading">마케팅을 게임처럼 쉽게 <img src="/img/joystick_img.webp" alt="Joystick"
                     class="joystick-pixel"></span>
 
                 <!-- INSERT COIN Deco -->
                 <div class="insert-coin">
-                  <img src="/img/coin_img.png" alt="Coin" class="coin-pixel">
+                  <img src="/img/coin_img.webp" alt="Coin" class="coin-pixel">
                   <span class="blink">INSERT COIN</span>
                 </div>
               </div>
@@ -78,11 +78,11 @@ layout: default
                 {% if post.feature %}
                 <div class="post-feature-wrapper">
                   {% if post.feature contains 'smain' %}
-                  <div class="post-feature-template" style="background-image: url('/img/post%20main%20bg.png');">
+                  <div class="post-feature-template" style="background-image: url('/img/post main bg.webp');">
                     <div class="template-title">{{ post.title }}</div>
                   </div>
                   {% else %}
-                  <img class="post-feature" src="{{ post.feature }}" alt="">
+                  <img class="post-feature" src="{{ post.feature }}" alt="" loading="lazy">
                   {% endif %}
                 </div>
                 {% endif %}
