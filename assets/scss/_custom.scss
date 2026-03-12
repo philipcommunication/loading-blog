@@ -1005,7 +1005,8 @@ body.game-mode {
 
     .section-divider {
       border: none;
-      border-top: 4px dashed var(--gb-bezel);
+      height: 10px;
+      background: repeating-linear-gradient(45deg, #222, #222 10px, #333 10px, #333 20px);
       margin: 60px 0;
       opacity: 0.5;
     }
@@ -1021,8 +1022,8 @@ body.game-mode {
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
-        max-width: 550px;
-        /* 최종 밀착 너비 */
+        max-width: 100%;
+        /* 사용자 요청에 따라 크기 제한 해제 */
         margin: 0 auto;
 
         .news-header,
@@ -2258,71 +2259,15 @@ body.game-mode {
     }
   }
 
-  /* 홈 디자인 시스템 전역화: 모든 페이지에서 동일한 뉴스보드 및 구분선 스타일 사용 가능 */
-  .news-board {
-    max-width: 550px;
-    margin: 0 auto;
-    background: rgba(30, 31, 30, 0.9);
-    border: 6px solid var(--gb-black);
-    border-radius: 12px;
-    overflow: hidden;
+}
 
-    .news-header,
-    .news-list li a {
-      display: grid !important;
-      grid-template-columns: 120px minmax(0, 1fr) 90px !important;
-      gap: 0 !important;
-      align-items: center !important;
-      padding: 10px 15px !important;
-    }
-
-    .news-header {
-      background: #444;
-      color: #aaa;
-      font-family: var(--font-pixel);
-      font-size: 10px;
-    }
-
-    .news-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li a {
-        color: #fff;
-        font-family: 'Galmuri11';
-        transition: background 0.2s;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: #a3ff00;
-        }
-      }
-    }
-
-    .news-type {
-      background: var(--gb-red);
-      color: #fff;
-      padding: 3px 6px;
-      font-size: 9px;
-      font-family: var(--font-pixel);
-    }
-
-    .news-date {
-      color: #888;
-      font-size: 10px;
-      font-family: var(--font-pixel);
-      text-align: right;
-    }
-  }
-
-  .section-divider {
-    border: none;
-    height: 10px;
-    background: repeating-linear-gradient(45deg, #222, #222 10px, #333 10px, #333 20px);
-    margin: 50px 0;
-    opacity: 0.5;
-  }
+/* 홈 디자인 시스템 전역화: 모든 페이지에서 동일한 뉴스보드 및 구분선 스타일 사용 가능 */
+.section-divider {
+  border: none;
+  height: 10px;
+  background: repeating-linear-gradient(45deg, #222, #222 10px, #333 10px, #333 20px);
+  margin: 50px 0;
+  opacity: 0.5;
 }
 
 .gb-header-decor #mainNav .navbar-toggler {
