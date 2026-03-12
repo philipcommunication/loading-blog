@@ -2,24 +2,22 @@
 layout: page
 title: Information
 permalink: /category/information/
-background: '/img/bg-Information.png'
+background: '/img/bg-information.png'
 ---
 
 <div class="post-grid-container">
 	{% for post in site.categories.information %}
 	<article class="post-preview">
 		<a href="{{ post.url | relative_url }}">
-			{% if post.feature %}
 			<div class="post-feature-wrapper">
-				{% if post.feature contains 'smain' %}
-				<div class="post-feature-template" style="background-image: url('/img/post%20main%20bg.png');">
+				{% if post.feature == nil or post.feature == "" or post.feature contains 'smain' or post.feature contains 'post main bg' %}
+				<div class="post-feature-template" style="background-image: url('/img/post main bg.png');">
 					<div class="template-title">{{ post.title }}</div>
 				</div>
 				{% else %}
-				<img class="post-feature" src="{{ post.feature }}" alt="">
+				<img class="post-feature" src="{{ post.feature | relative_url }}" alt="" loading="lazy">
 				{% endif %}
 			</div>
-			{% endif %}
 			<h2 class="post-title">{{ post.title }}</h2>
 			{% if post.description %}
 			<h4 class="post-subtitle">{{ post.description }}</h4>

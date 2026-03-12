@@ -1108,7 +1108,11 @@
 
             // Fill form
             document.getElementById('p-title').value = metadata.title || '';
-            document.getElementById('p-slug').value = path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '').replace(/\.html$/, '');
+            
+            // URL 슬러그 결정: permalink가 있으면 사용하고, 없으면 파일명에서 추출
+            let slugVal = metadata.permalink ? metadata.permalink.replace(/^\/|\/$/g, '') : path.replace('_posts/', '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '').replace(/\.html$/, '');
+            document.getElementById('p-slug').value = slugVal;
+            
             document.getElementById('p-date').value = path.match(/^\d{4}-\d{2}-\d{2}/) ? path.match(/^\d{4}-\d{2}-\d{2}/)[0] : new Date().toISOString().split('T')[0];
             let catVal = metadata.categories ? metadata.categories.replace(/[\[\]]/g, '').trim().toLowerCase() : 'information';
             // Ensure the value exists in our select options, else default
@@ -1185,7 +1189,7 @@
             const sha = (existing && existing.sha) ? existing.sha : null;
 
             const tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
-            const yaml = `---\nlayout: post\ntitle: '${title}'\ndate: ${date}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${slug}/\n---\n\n${document.getElementById('md-input').value}`;
+            const yaml = `---\nlayout: post\ntitle: '${title}'\npermalink: /${slug}/\ndate: ${date}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\n---\n\n${document.getElementById('md-input').value}`;
 
             // Handle UTF-8 for btoa
             const contentEncoded = btoa(unescape(encodeURIComponent(yaml)));

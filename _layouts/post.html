@@ -3,11 +3,28 @@ layout: default
 ---
 
 <!-- Page Header -->
-{% if page.background %}
-<header class="masthead" style="background-image: url('{{ page.background | relative_url }}')">
+{% assign bg_image = page.background %}
+{% if bg_image == nil or bg_image == "" %}
+  {% if page.categories contains "experience" %}
+    {% assign bg_image = "/img/bg-experience.png" %}
+  {% elsif page.categories contains "marketing" %}
+    {% assign bg_image = "/img/bg-marketing.png" %}
+  {% elsif page.categories contains "information" %}
+    {% assign bg_image = "/img/bg-information.png" %}
+  {% elsif page.categories contains "manual" %}
+    {% assign bg_image = "/img/bg-manual.png" %}
+  {% elsif page.categories contains "posts" %}
+    {% assign bg_image = "/img/bg-posts.png" %}
+  {% elsif page.categories contains "record" %}
+    {% assign bg_image = "/img/bg-record.png" %}
+  {% elsif page.categories contains "about" %}
+    {% assign bg_image = "/img/bg-about.png" %}
   {% else %}
-  <header class="masthead" style="background-image: url('{{ page.feature | relative_url }}')">
-    {% endif %}
+    {% assign bg_image = page.feature %}
+  {% endif %}
+{% endif %}
+
+<header class="masthead" style="background-image: url('{{ bg_image | relative_url }}')">
 
     <div class="container-fluid">
       <div class="row">
