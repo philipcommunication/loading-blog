@@ -285,9 +285,23 @@
             flex: 1;
             padding: 30px;
             overflow-y: auto;
-            background: white;
+            background: #111; /* Dark background to match live site */
             line-height: 1.8;
-            color: #333;
+            color: #eee;
+        }
+
+        #md-preview h1, #md-preview h2, #md-preview h3, #md-preview h4 {
+            color: #a3ff00;
+            text-shadow: 0 0 10px rgba(163, 255, 0, 0.5);
+            border-bottom: 2px solid rgba(163, 255, 0, 0.2);
+            padding-bottom: 8px;
+            margin-top: 1.5em;
+        }
+
+        .neon-text {
+            color: #a3ff00 !important;
+            text-shadow: 0 0 8px rgba(163, 255, 0, 0.6) !important;
+            font-weight: bold;
         }
 
         #md-preview img {
@@ -296,11 +310,7 @@
             border-radius: 4px;
         }
 
-        #md-preview h1,
-        #md-preview h2 {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
+
 
         .overlay {
             position: fixed;
@@ -635,6 +645,8 @@
                                     <button class="btn tool-btn" onclick="insertFmt('> ')"><i
                                             class="fas fa-quote-left"></i></button><button class="btn tool-btn"
                                         onclick="insertFmt('- ')"><i class="fas fa-list"></i></button>
+                                    <button class="btn tool-btn" style="color: #a3ff00; background: #222;" title="형광색 네온 텍스트"
+                                        onclick="insertFmt('<span class=\'neon-text\'>', '</span>')"><i class="fas fa-highlighter"></i></button>
                                 </div>
                                 <div class="editor-container"><textarea id="md-input" oninput="updatePreview()"
                                         placeholder="이곳에 글 내용을 작성하세요. (마크다운 지원)"></textarea>
@@ -912,13 +924,60 @@
                         date: nameParts ? nameParts[1] : 'Unknown',
                         path: f.path,
                         slug: nameParts ? nameParts[2] : f.name,
-                        cat: gCat
+                        cat: gCat,
+                        enriched: false
                     };
                 })
                 .reverse(); // Newest first
 
             posts = [...originalPosts];
-            applyFilters();
+            renderPosts();
+            enrichPostsMetadata(); // 백그라운드에서 실제 제목/카테고리 정보 가져오기
+        }
+
+        async function enrichPostsMetadata() {
+            // 최근 20개 포스팅의 실제 데이터를 가져와서 제목과 카테고리 업데이트
+            const limit = 20;
+            const targetPosts = originalPosts.slice(0, limit);
+            
+            for (let i = 0; i < targetPosts.length; i++) {
+                const p = targetPosts[i];
+                if (p.enriched) continue;
+
+                // API 호출 최적화: 병렬로 처리하면 좋지만 속도 제한 고려하여 순차 처리
+                const file = await apiCall(p.path);
+                if (file) {
+                    try {
+                        const content = decodeURIComponent(escape(atob(file.content)));
+                        const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
+                        if (fmMatch) {
+                            const metadata = {};
+                            fmMatch[1].split('\n').forEach(line => {
+                                const idx = line.indexOf(':');
+                                if (idx > 0) {
+                                    const key = line.substring(0, idx).trim();
+                                    const val = line.substring(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+                                    metadata[key] = val;
+                                }
+                            });
+                            if (metadata.title) p.title = metadata.title;
+                            if (metadata.categories) {
+                                // [cat] 또는 - cat 형식 모두 처리
+                                let catStr = metadata.categories.replace(/[\[\]\-\s]/g, '').split(',')[0];
+                                if (catStr) p.cat = catStr.toLowerCase();
+                            }
+                            p.enriched = true;
+                        }
+                    } catch (e) {
+                        console.warn("Failed to parse metadata for " + p.path, e);
+                    }
+                }
+                
+                // 5개마다 또는 마지막에 화면 갱신
+                if ((i + 1) % 5 === 0 || i === targetPosts.length - 1) {
+                    applyFilters();
+                }
+            }
         }
 
         function renderPosts() {
@@ -1189,7 +1248,12 @@
             const sha = (existing && existing.sha) ? existing.sha : null;
 
             const tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
-            const yaml = `---\nlayout: post\ntitle: '${title}'\npermalink: /${slug}/\ndate: ${date}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\n---\n\n${document.getElementById('md-input').value}`;
+            const cat = document.getElementById('p-cat').value;
+            const desc = document.getElementById('p-desc').value;
+            const img = document.getElementById('p-img').value;
+            
+            // SEO 및 가독성을 위해 기존 마크다운 포맷과 일치시킴
+            const yaml = `---\nlayout: post\ntitle: '${title}'\npermalink: /${slug}/\ndate: ${date} 00:00:00 +09:00\ncategories:\n  - ${cat}\n  - loadingblog\ntags:\n${tags}\nfeature: '${img}'\nbackground: '/img/bg-${cat}.png'\ndescription: "${desc.replace(/"/g, '\"')}"\nexcerpt: "${desc.replace(/"/g, '\"')}"\n---\n\n${document.getElementById('md-input').value}`;
 
             // Handle UTF-8 for btoa
             const contentEncoded = btoa(unescape(encodeURIComponent(yaml)));

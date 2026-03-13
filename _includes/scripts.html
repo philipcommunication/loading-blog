@@ -1,8 +1,8 @@
-<script src="/assets/vendor/jquery/jquery.min.js" defer></script>
-<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js" defer></script>
-<script src="/assets/vendor/startbootstrap-clean-blog/js/clean-blog.min.js" defer></script>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/startbootstrap-clean-blog/js/clean-blog.min.js"></script>
 
-<script src="/assets/scripts.js" defer></script>
+<script src="/assets/scripts.js"></script>
 
 {% if page.url contains 'contact' %}
 <!-- Form Validation -->
@@ -119,17 +119,12 @@
 
   // Mobile Navbar Toggle Script
   $(document).ready(function () {
-    $('.navbar-toggler').on('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation(); // 이벤트 전파 방지
-      var target = $(this).attr('data-target');
-      $(target).toggleClass('show');
-    });
-
-    // 외부 클릭 시 메뉴 닫기
+    // 외부 클릭 시 메뉴 닫기 (모바일 뷰어용)
     $(document).on('click', function (event) {
       if (!$(event.target).closest('#mainNav').length) {
-        $('#navbarResponsive').removeClass('show');
+        if ($('#navbarResponsive').hasClass('show')) {
+           $('#navbarResponsive').collapse('hide');
+        }
       }
     });
   });

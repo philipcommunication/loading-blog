@@ -1336,6 +1336,12 @@ body.game-mode {
         text-shadow: 0 0 10px rgba(163, 255, 0, 0.5) !important;
       }
 
+      .neon-text {
+        color: #a3ff00 !important;
+        text-shadow: 0 0 8px rgba(163, 255, 0, 0.6) !important;
+        font-weight: bold;
+      }
+
       h2 {
         font-size: clamp(1.8rem, 5vw, 2.5rem) !important;
       }
