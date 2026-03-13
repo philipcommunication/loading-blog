@@ -953,20 +953,11 @@
                         const content = decodeURIComponent(escape(atob(file.content)));
                         const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
                         if (fmMatch) {
-                            const metadata = {};
-                            fmMatch[1].split('\n').forEach(line => {
-                                const idx = line.indexOf(':');
-                                if (idx > 0) {
-                                    const key = line.substring(0, idx).trim();
-                                    const val = line.substring(idx + 1).trim().replace(/^['"]|['"]$/g, '');
-                                    metadata[key] = val;
-                                }
-                            });
+                            const metadata = jsyaml.load(fmMatch[1]);
                             if (metadata.title) p.title = metadata.title;
                             if (metadata.categories) {
-                                // [cat] 또는 - cat 형식 모두 처리
-                                let catStr = metadata.categories.replace(/[\[\]\-\s]/g, '').split(',')[0];
-                                if (catStr) p.cat = catStr.toLowerCase();
+                                let catVal = Array.isArray(metadata.categories) ? metadata.categories[0] : metadata.categories;
+                                if (catVal) p.cat = catVal.toLowerCase();
                             }
                             p.enriched = true;
                         }
@@ -1149,15 +1140,12 @@
             let body = content;
 
             if (fmMatch) {
-                fmMatch[1].split('\n').forEach(line => {
-                    const part = line.split(':');
-                    if (part.length >= 2) {
-                        const key = part[0].trim();
-                        const val = part.slice(1).join(':').trim().replace(/^['"]|['"]$/g, '');
-                        metadata[key] = val;
-                    }
-                });
-                body = content.replace(fmMatch[0], '').trim();
+                try {
+                    metadata = jsyaml.load(fmMatch[1]) || {};
+                    body = content.replace(fmMatch[0], '').trim();
+                } catch (e) {
+                    console.error("YAML 파싱 에러", e);
+                }
             }
 
             // Switch to editor
@@ -1183,7 +1171,10 @@
             } else {
                 catSelect.value = 'information';
             }
-            document.getElementById('p-tags').value = metadata.tags || '';
+            let tagsVal = metadata.tags || '';
+            if (Array.isArray(tagsVal)) tagsVal = tagsVal.join(', ');
+            document.getElementById('p-tags').value = tagsVal;
+
             document.getElementById('p-img').value = metadata.feature || '';
             document.getElementById('p-bg').value = metadata.background || '';
             document.getElementById('p-desc').value = metadata.description || metadata.excerpt || '';
