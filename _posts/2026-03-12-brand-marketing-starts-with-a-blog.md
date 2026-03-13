@@ -3,7 +3,9 @@ layout: post
 title: '브랜드 마케팅의 시작은 블로그'
 permalink: /brand-marketing-starts-with-a-blog/
 date: 2026-03-13
-categories: [record]
+categories:
+  - record
+  - loadingblog
 tags:
 
 feature: 

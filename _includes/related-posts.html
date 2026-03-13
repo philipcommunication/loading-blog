@@ -1,5 +1,4 @@
-{% assign category = page.categories.first %}
-{% assign category_posts = site.categories[category] %}
+{% assign category_posts = site.posts %}
 
 {% for p in category_posts %}
 {% if p.url == page.url %}

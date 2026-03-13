@@ -598,9 +598,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-row" style="padding: 10px 0;">
-                                    <div class="form-group" style="flex:2.5;"><label>포스트 제목</label><input type="text"
+                                    <div class="form-group" style="flex:2.5;"><label>title (제목)</label><input type="text"
                                             id="p-title" oninput="autoSlug()" placeholder="멋진 제목을 입력하세요"></div>
-                                    <div class="form-group" style="flex:1.5;"><label>카테고리</label>
+                                    <div class="form-group" style="flex:1.5;"><label>categories (카테고리)</label>
                                         <select id="p-cat">
                                             <option value="information">INFORMATION (정보)</option>
                                             <option value="experience">EXPERIENCE (경험)</option>
@@ -612,19 +612,21 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group" style="flex:1.5;"><label>URL 주소 (슬러그)</label><input
-                                            type="text" id="p-slug" placeholder="post-url-slug"></div>
-                                    <div class="form-group" style="flex:1;"><label>발행 날짜</label><input type="text"
-                                            id="p-date" placeholder="2024-02-27"></div>
+                                    <div class="form-group" style="flex:1.5;"><label>permalink (포스팅 URL)</label><input
+                                            type="text" id="p-slug" placeholder="/post-url-slug/"></div>
+                                    <div class="form-group" style="flex:1;"><label>date (발행일)</label><input type="text"
+                                            id="p-date" placeholder="2020-08-26 14:00:00 +09:00"></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group" style="flex:1.5;"><label>해시태그 (콤마로 구분)</label><input
-                                            type="text" id="p-tags" placeholder="마케팅, 게임, 리뷰"></div>
-                                    <div class="form-group" style="flex:1;"><label>대표 이미지 경로</label><input type="text"
-                                            id="p-img" placeholder="/img/posts/thumb.png"></div>
+                                    <div class="form-group" style="flex:1.5;"><label>tags (태그/쉼표 구분)</label><input
+                                            type="text" id="p-tags" placeholder="네이버로직, 마케팅, 광고"></div>
+                                    <div class="form-group" style="flex:1;"><label>feature (대표 이미지)</label><input type="text"
+                                            id="p-img" placeholder="/img/post main bg.png"></div>
+                                    <div class="form-group" style="flex:1;"><label>background (배경 이미지)</label><input type="text"
+                                            id="p-bg" placeholder="/img/post main bg.png"></div>
                                 </div>
-                                <div class="form-group"><label>글 요약 (짧은 설명)</label><textarea id="p-desc" rows="2"
-                                        placeholder="미리보기에 표시될 요약 내용..."></textarea></div>
+                                <div class="form-group"><label>description (설명/SEO 요약)</label><textarea id="p-desc" rows="2"
+                                        placeholder="실무를 진행하며 느낀..."></textarea></div>
                                 <div class="image-upload-wrapper"
                                     onclick="document.getElementById('img-upload').click()">
                                     <i class="fas fa-image"
@@ -1183,7 +1185,8 @@
             }
             document.getElementById('p-tags').value = metadata.tags || '';
             document.getElementById('p-img').value = metadata.feature || '';
-            document.getElementById('p-desc').value = metadata.excerpt || '';
+            document.getElementById('p-bg').value = metadata.background || '';
+            document.getElementById('p-desc').value = metadata.description || metadata.excerpt || '';
             document.getElementById('md-input').value = body;
 
             window.currentEditPath = path; // Store for saving
@@ -1196,10 +1199,13 @@
             document.getElementById('posts-editor-view').style.display = 'block';
             document.getElementById('editor-title').innerText = '포스트 작성/수정';
             document.querySelectorAll('#posts-editor-view input, #posts-editor-view textarea').forEach(i => i.value = "");
-            document.getElementById('p-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('md-input').value = "# 새로운 글 제목\n\n여기에 내용을 작성하세요...";
+            document.getElementById('p-date').value = new Date().toISOString().split('T')[0] + " 12:00:00 +09:00";
+            document.getElementById('p-img').value = "/img/post main bg.png";
+            document.getElementById('p-bg').value = "/img/post main bg.png";
+            document.getElementById('md-input').value = "Loading Blog - 제목을 입력하세요\n\n여기에 내용을 작성하세요...";
             updatePreview();
         }
+
 
         function hideEditor() {
             document.getElementById('posts-list-view').style.display = 'block';
@@ -1207,10 +1213,11 @@
         }
 
         function autoSlug() {
-            document.getElementById('p-slug').value = document.getElementById('p-title').value
+            let slug = document.getElementById('p-title').value
                 .toLowerCase()
-                .replace(/[^\w\s-]/g, '')
+                .replace(/[^\w\sㄱ-힣-]/g, '')
                 .replace(/\s+/g, '-');
+            document.getElementById('p-slug').value = `/${slug}/`;
         }
 
         function updatePreview() {
@@ -1228,16 +1235,22 @@
 
         async function saveToGithub() {
             const title = document.getElementById('p-title').value;
-            const slug = document.getElementById('p-slug').value;
+            let permalink = document.getElementById('p-slug').value;
             const date = document.getElementById('p-date').value;
-            if (!title || !slug) { alert("제목과 URL 주소(슬러그)는 필수입니다!"); return; }
+            if (!title || !permalink) { alert("제목과 URL 주소(permalink)는 필수입니다!"); return; }
+
+            // Ensure permalink has slashes
+            if (!permalink.startsWith('/')) permalink = '/' + permalink;
+            if (!permalink.endsWith('/')) permalink = permalink + '/';
 
             let path = window.currentEditPath;
             const isEditing = !!path;
 
             if (!isEditing) {
-                // New Post
-                const fileName = `${date}-${slug}.md`;
+                // New Post name format: YYYY-MM-DD-filename.md
+                const cleanSlug = permalink.replace(/^\/|\/$/g, '');
+                const justDate = date.split(' ')[0];
+                const fileName = `${justDate}-${cleanSlug}.md`;
                 path = `_posts/${fileName}`;
             }
 
@@ -1247,15 +1260,23 @@
             const existing = await apiCall(path);
             const sha = (existing && existing.sha) ? existing.sha : null;
 
-            const tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
+            const tagsStr = document.getElementById('p-tags').value;
+            const tags = tagsStr.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
             const cat = document.getElementById('p-cat').value;
             const desc = document.getElementById('p-desc').value;
-            const img = document.getElementById('p-img').value;
+            const feature = document.getElementById('p-img').value;
+            const bg = document.getElementById('p-bg').value;
             
-            // SEO 및 가독성을 위해 기존 마크다운 포맷과 일치시킴
-            const yaml = `---\nlayout: post\ntitle: '${title}'\npermalink: /${slug}/\ndate: ${date} 00:00:00 +09:00\ncategories:\n  - ${cat}\n  - loadingblog\ntags:\n${tags}\nfeature: '${img}'\nbackground: '/img/bg-${cat}.png'\ndescription: "${desc.replace(/"/g, '\"')}"\nexcerpt: "${desc.replace(/"/g, '\"')}"\n---\n\n${document.getElementById('md-input').value}`;
+            // 본문 첫 줄에 "Loading Blog - 제목" 보장
+            let body = document.getElementById('md-input').value;
+            const introLine = `Loading Blog - ${title}`;
+            if (!body.startsWith('Loading Blog -')) {
+                body = introLine + "\n\n" + body;
+            }
 
-            // Handle UTF-8 for btoa
+            // SEO 및 가독성을 위해 기존 마크다운 포맷과 일치시킴
+            const yaml = `---\nlayout: post\npermalink: ${permalink}\ntitle: '${title}'\ndate: ${date}\nfeature: '${feature}'\nbackground: '${bg}'\ncategories:\n  - ${cat}\n  - loadingblog\ntags:\n${tags}\ndescription: '${desc.replace(/'/g, "''")}'\n---\n\n${body}`;
+
             const contentEncoded = btoa(unescape(encodeURIComponent(yaml)));
 
             const res = await apiCall(path, 'PUT', {
@@ -1306,8 +1327,25 @@
 
 
         function exportPost() {
-            let tags = document.getElementById('p-tags').value.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
-            let yaml = `---\nlayout: post\ntitle: '${document.getElementById('p-title').value}'\ndate: ${document.getElementById('p-date').value}\ncategories: [${document.getElementById('p-cat').value}]\ntags:\n${tags}\nfeature: ${document.getElementById('p-img').value}\nexcerpt: "${document.getElementById('p-desc').value.replace(/"/g, '\"')}"\npermalink: /${document.getElementById('p-slug').value}/\n---\n\n${document.getElementById('md-input').value}`;
+            const title = document.getElementById('p-title').value;
+            let permalink = document.getElementById('p-slug').value;
+            const date = document.getElementById('p-date').value;
+            const tagsStr = document.getElementById('p-tags').value;
+            const tags = tagsStr.split(',').map(s => s.trim()).filter(s => s != '').map(s => `  - ${s}`).join('\n');
+            const cat = document.getElementById('p-cat').value;
+            const desc = document.getElementById('p-desc').value;
+            const feature = document.getElementById('p-img').value;
+            const bg = document.getElementById('p-bg').value;
+
+            if (!permalink.startsWith('/')) permalink = '/' + permalink;
+            if (!permalink.endsWith('/')) permalink = permalink + '/';
+
+            let body = document.getElementById('md-input').value;
+            if (!body.startsWith('Loading Blog -')) {
+                body = `Loading Blog - ${title}\n\n` + body;
+            }
+
+            const yaml = `---\nlayout: post\npermalink: ${permalink}\ntitle: '${title}'\ndate: ${date}\nfeature: '${feature}'\nbackground: '${bg}'\ncategories:\n  - ${cat}\n  - loadingblog\ntags:\n${tags}\ndescription: '${desc.replace(/'/g, "''")}'\n---\n\n${body}`;
             openModal(yaml);
         }
 
